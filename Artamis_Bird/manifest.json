@@ -1,0 +1,13 @@
+{
+	"conf" : {
+		"title" : "Pixyl Bird Builder",
+		"desc" : "builds animations and frames for adruino",
+		"embeded" : true,
+		"enable_p5" : true
+	},
+	"scripts" : [
+		"//cdnjs.cloudflare.com/ajax/libs/mathjs/3.16.4/math.min.js",
+		"./env.js",
+		"./sketch.js"
+	]
+}
