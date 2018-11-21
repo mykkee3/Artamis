@@ -1,6 +1,2 @@
 INFO:root:Done Initializing
-INFO:root:Starting Pipes
-INFO:root.www:0.0.0.0:8080
-
-INFO:root:Server: Starting input pipe
-
+INFO:root.www:127.0.0.1 : 80
