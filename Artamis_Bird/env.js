@@ -34,6 +34,7 @@ Environment.prototype.onClick = function (mx, my) {
 	this.birb.onClick(mx, my);
 };
 Environment.prototype.keyPressed = function (key) {
+	if (key == 53) document.location.reload();
 	console.log("key pressed:", key);
 	//
 	

@@ -13,7 +13,7 @@ var enviroment;
 
 function setup () {
 	// Create Canvas //
-	var myCanvas = createCanvas(600, 550);
+	var myCanvas = createCanvas(780, 460);
 	myCanvas.parent('game-container');
 	// Init //
 	enviroment = new Environment();

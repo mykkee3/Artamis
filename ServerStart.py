@@ -19,9 +19,10 @@ from imp import load_source
 #-# Globals and Constants #-#
 
 PARSER = argparse.ArgumentParser()
-PARSER.add_argument("in_pipe", help="filepath to stdin pipe")
-PARSER.add_argument("out_pipe", help="filepath to stdout pipe")
+PARSER.add_argument("in_pipe", nargs='?', default="server_inpipe", help="filepath to stdin pipe")
+PARSER.add_argument("out_pipe", nargs='?', default="server_outpipe", help="filepath to stdout pipe")
 
+PARSER.add_argument("-c", "--console", help="run in console mode", action="store_true")
 PARSER.add_argument("-v", "--verbose", help="increase output verbosity", action="store_true")
 
 args = PARSER.parse_args()
@@ -73,6 +74,20 @@ def start_input():
 	filepath = "./"+args.in_pipe
 	LOG.info(msg)
 	
+	if args.console:
+		msg = "Server: Input switching to console mode "
+		print msg		
+		LOG.info(msg)
+		while RUNNING_STATE:
+			usr_in = raw_input("Console: ")
+			if (usr_in.strip() == "kill"):
+				print "Server: Kill received: Server Dying"
+				RUNNING_STATE = False
+				server.server_close()
+			else:
+				print "Console: Help message\n\tkill\tKills the server"
+		return;
+	
 	with open(filepath, 'r') as pipe:
 		print "Server: Input pipe opened."
 		while RUNNING_STATE:
@@ -82,6 +97,7 @@ def start_input():
 			if (data.strip() == "kill"):
 				print "Server: Kill received: Server Dying"
 				RUNNING_STATE = False
+				server.server_close()
 	
 def push_output(msg):
 	filepath = "./"+args.out_pipe
