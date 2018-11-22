@@ -1,7 +1,8 @@
 {
 	"info":{
 		"name":"Artamis",
-		"version":"0.1.0",
+		"version":"0.0.1",
+		"version_phase":"pre-alpha",
 		"incarnation":0,
 		"desc":"A general purpose AI"	
 	},
