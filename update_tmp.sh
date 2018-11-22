@@ -10,6 +10,7 @@ if [ "$cur_ver" != "$new_ver" ] && [ ! -z "$new_ver" ]; then
 	res=$?
 	if [ "$res" = "0" ]; then
 		echo "Older Version - starting update";
+		git pull origin master
 	else
 		echo "Version $cur_ver is up to date"
 	fi
