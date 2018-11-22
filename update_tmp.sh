@@ -1,5 +1,7 @@
 echo "\nStarting Update shell"
 
+hard=false;
+
 cur_ver=$(jq --raw-output '.info.version' manifest.json);
 new_ver=$(curl "https://raw.githubusercontent.com/mykkee3/Artamis/master/manifest.json" | jq --raw-output '.info.version')
 
@@ -12,7 +14,9 @@ if [ "$cur_ver" != "$new_ver" ] && [ ! -z "$new_ver" ]; then
 		echo "Older Version - starting update";
 		git fetch --all
 		git pull origin master
-		git reset --hard origin/master
+		if $hard; then
+			git reset --hard origin/master
+		fi
 		
 	else
 		echo "Version $cur_ver is up to date"
