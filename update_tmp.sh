@@ -10,8 +10,9 @@ if [ "$cur_ver" != "$new_ver" ] && [ ! -z "$new_ver" ]; then
 	res=$?
 	if [ "$res" = "0" ]; then
 		echo "Older Version - starting update";
-		cd ../
-		git clone https://github.com/mykkee3/Artamis.git
+		git fetch --all
+		git reset origin/master
+		
 	else
 		echo "Version $cur_ver is up to date"
 	fi
