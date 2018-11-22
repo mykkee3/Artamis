@@ -1,6 +1,6 @@
 echo "\nStarting Update shell"
 
-hard=false;
+hard=true;
 
 cur_ver=$(jq --raw-output '.info.version' manifest.json);
 new_ver=$(curl "https://raw.githubusercontent.com/mykkee3/Artamis/master/manifest.json" | jq --raw-output '.info.version')
