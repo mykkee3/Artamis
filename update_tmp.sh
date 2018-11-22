@@ -11,7 +11,8 @@ if [ "$cur_ver" != "$new_ver" ] && [ ! -z "$new_ver" ]; then
 	if [ "$res" = "0" ]; then
 		echo "Older Version - starting update";
 		git fetch --all
-		git reset origin/master
+		git pull origin master
+		git reset --hard origin/master
 		
 	else
 		echo "Version $cur_ver is up to date"
