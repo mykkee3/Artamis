@@ -129,92 +129,10 @@ Animator.prototype.draw = function () {
 	var blush_alpha = constrain(this.attr_data.blush_alpha, 0,1) * 255;
 	var blushd_alpha = constrain(this.attr_data.blushd_alpha, 0,1) * 255;
 	
-	translate(100,-100)
+	translate(width/2, height/2);
 	
-	//feets
-	fill(180,190,10);
-	rectMode(CENTER);
-	push();
-	translate(275,500);
-	rotate(0.15);
-	rect(0,10,10,50);
-	pop();
-	push();
-	translate(325,500);
-	rotate(-0.15);
-	rect(0,10,10,50);
-	pop();
-	push();
-	translate(300,525);
-	triangle(-30,0, -60, 20, -20, 20);
-	triangle(30,0, 60, 20, 20, 20);
-	pop();
-
-	//bodd
-	fill(70,90,180);
-	ellipse(240,410, 35,120);
-	ellipse(360,410, 35,120);
-	ellipse(300, 400, 120, 220);
-
-	//head
-	fill(70,90,180);
-	ellipse(300,300,145,130);
-
-	//eyes
-	fill(220);
-	ellipse(275,300,35,45);
-	ellipse(325,300,35,45);
-	fill(20);
-	ellipse(275 + eye_x,300 + eye_y,10,15);
-	ellipse(325 + eye_x,300 + eye_y,10,15);
-	// bottom lid
-	noStroke();
-	rectMode(CENTER);
-	push();
-	translate(300, 335);
-	fill(20,20,20,min(eye_openess*40-3, 1)*255);
-	rect(-25, -eye_openess*20, 40-(20-eye_openess*20), 23+eye_openess*20);
-	rect(25, -eye_openess*20, 40-(20-eye_openess*20), 23+eye_openess*20);
-	fill(70,90,180);
-	rect(-25, 1-eye_openess*20, 45-(20-eye_openess*20), 22+eye_openess*20);
-	rect(25, 1-eye_openess*20, 45-(20-eye_openess*20), 22+eye_openess*20);
-	pop();
-	//left brow
-	push();
-	translate(275+brow_rot*10, 280);
-	rotate(brow_rot);
-	fill(20);
-	rect(0,1 + brow_h, 40+abs(brow_rot)*20, 23);
-	fill(70,90,180);
-	rect(0, 0 + brow_h, 43+abs(brow_rot)*20, 22);
-	pop();
-	//right brow
-	push();
-	translate(325-brow_rot*10, 280);
-	rotate(-brow_rot);
-	fill(20);
-	rect(0,1 + brow_h, 40+abs(brow_rot)*20, 23);
-	fill(70,90,180);
-	rect(0, 0 + brow_h, 43+abs(brow_rot)*20, 22);
-	pop();
-
-	//beak
-	fill(180,190,10);
-	stroke(0);
-	quad(300,310,320,325, 300,360,280,325);
-	
-
-	// blush
-	push();
-	noStroke();
-	fill(230,90,120, blush_alpha*0.4);
-	ellipse(300,318, 65,15);
-	fill(100,10,230, blushd_alpha*0.4);
-	ellipse(300,322, 70,25);
-	pop()
-
-	//
-	
+	fill(255,255,255);
+	ellipse(0,0,10,10);
 
 	// back
 

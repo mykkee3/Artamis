@@ -51,6 +51,24 @@ Environment.prototype.save_data = function (s) {
 }
 
 
+// -=-=-=-=- Javascript Log -=-=-=-=- //
+var Logger = function () {
+	LOG_costructor = function (data) {
+	};
+	
+	// variable and constants	
+	this._logs = {};
+	this.data = {
+		verbosity:true
+	};
+	//
+	
+	this.get_log = function (name, data) {
+		
+	};
+};
+
+
 // -=-=-=-=- Finite State Machine -=-=-=-=- //
 var SimpleFSM = function (agent) {
 	this.agent = agent;
