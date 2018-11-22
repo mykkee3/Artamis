@@ -129,6 +129,7 @@ Animator.prototype.draw = function () {
 	var blush_alpha = constrain(this.attr_data.blush_alpha, 0,1) * 255;
 	var blushd_alpha = constrain(this.attr_data.blushd_alpha, 0,1) * 255;
 	
+	translate(100,-100)
 	
 	//feets
 	fill(180,190,10);
