@@ -13,12 +13,15 @@
 
 var Environment = function () {
 	//
-	this.log = Logger.get_log();
-	this.log.log('testing logger');
-	this.log.log('testing verbosity', {verbose:falses})
+	this.log = Logger.get_log('info', {verbose:true});
+	this.log.log('Starting Artamis!', {verbosity:true});
 	this.birb = new Birb();
+	this.log.log('Initializing Birb');
 	this.birb.init();
 	this.chat = new Chat(this);
+	this.log.log('Done starting Artamis');
+	//
+	Logger.get_log('error', {verbose:true}).log('testing error');
 	//
 };
 //-=-//
@@ -29,6 +32,7 @@ Environment.prototype.update = function () {
 };
 Environment.prototype.draw = function () {
 	background(100);
+	Logger.draw();
 	this.birb.draw();
 };
 //-=-//
@@ -55,24 +59,53 @@ Environment.prototype.save_data = function (s) {
 
 
 // -=-=-=-=- Javascript Log -=-=-=-=- //
-var Logger = function () {
-	LOG_costructor = function (name, data) {
-		this.log = function (msg, data) {
-			console.log(msg);
-		};
-	};
+var Logger = {
+	_LOG_costructor : function (parent, name, data) {
+		o = {
+			parent : parent,
+			name : name,
+			data : data,
+			_log_file : "",
+			//
+			log : function (msg, data) {
+				time = new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().slice(11,-1);
+				data = Object.assign({
+					verbosity:false
+				}, data);
+				prefix = "Logger."+this.name+"("+time+"): ";
+				if (!this.data.verbose && !data.verbosity) return;
+				this._log_file += prefix+msg+"\n";
+				this.parent._log_file += prefix+msg+"\n";
+				console.log(prefix+msg);
+			}
+		}
+		return o;
+	},
 	
 	// variable and constants	
-	this._logs = {};
-	this.data = {
-		verbosity:true
-	};
+	_logs : {},
+	_log_file : "",
+	_data : {
+		pos:[10,200],
+		size:[300,300],
+		verbose:false
+	},
 	//
 	
-	this.get_log = function (name, data) {
-		if (! this._logs[name]) this._logs[name] = LOG_costructor(name, data);
+	get_log : function (name, data) {
+		if (! this._logs[name]) this._logs[name] = this._LOG_costructor(this, name, Object.assign(Object.assign({}, this._data), {"name":name}, data));
 		return this._logs[name];
-	};
+	},
+	//
+	draw : function (name) {
+		log_obj = this._logs[name];
+		if (!log_obj) log_obj = this;
+		fill(0,0,0,0);
+		stroke(0,0,0,100);
+		rect(this._data.pos[0], this._data.pos[1], this._data.size[0], this._data.size[1]);
+		fill(0,0,0,255);
+		text(log_obj._log_file, this._data.pos[0], this._data.pos[1], this._data.size[0], this._data.size[1]);
+	}
 };
 
 
