@@ -13,6 +13,9 @@
 
 var Environment = function () {
 	//
+	this.log = Logger.get_log();
+	this.log.log('testing logger');
+	this.log.log('testing verbosity', {verbose:falses})
 	this.birb = new Birb();
 	this.birb.init();
 	this.chat = new Chat(this);
@@ -53,7 +56,10 @@ Environment.prototype.save_data = function (s) {
 
 // -=-=-=-=- Javascript Log -=-=-=-=- //
 var Logger = function () {
-	LOG_costructor = function (data) {
+	LOG_costructor = function (name, data) {
+		this.log = function (msg, data) {
+			console.log(msg);
+		};
 	};
 	
 	// variable and constants	
@@ -64,7 +70,8 @@ var Logger = function () {
 	//
 	
 	this.get_log = function (name, data) {
-		
+		if (! this._logs[name]) this._logs[name] = LOG_costructor(name, data);
+		return this._logs[name];
 	};
 };
 
