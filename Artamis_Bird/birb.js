@@ -27,7 +27,7 @@ Birb.prototype.update = function () {
 }
 Birb.prototype.draw = function () {
 	this.anm.draw();
-	this.AI.emote.draw();
+	//this.AI.emote.draw();
 }
 Birb.prototype.onClick = function (mx, my) {
 	//
