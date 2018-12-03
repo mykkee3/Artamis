@@ -15,10 +15,12 @@ var Environment = function () {
 	//
 	this.log = Logger.get_log('info', {verbose:true});
 	this.log.log('Starting Artamis!', {verbosity:true});
+	//
 	this.birb = new Birb();
 	this.log.log('Initializing Birb');
 	this.birb.init();
 	this.chat = new Chat(this);
+	this.chat.init();
 	this.log.log('Done starting Artamis');
 	//
 	Logger.get_log('error', {verbose:true}).log('testing error');

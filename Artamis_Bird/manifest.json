@@ -7,6 +7,7 @@
 	},
 	"scripts" : [
 		"//cdnjs.cloudflare.com/ajax/libs/mathjs/3.16.4/math.min.js",
+		"//unpkg.com/@pusher/chatkit-client@1/dist/web/chatkit.js",
 		"./env.js",
 		"./chat.js",
 		"./birb.js",
