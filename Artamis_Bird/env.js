@@ -13,6 +13,7 @@
 
 var Environment = function () {
 	//
+	this.GUI = new _GUI();
 	this.log = Logger.get_log('info', {verbose:true});
 	this.log.log('Starting Artamis!', {verbosity:true});
 	//
@@ -28,17 +29,21 @@ var Environment = function () {
 };
 //-=-//
 Environment.prototype.update = function () {
+	this.GUI.update();
 	//
 	this.birb.update();
 	
 };
 Environment.prototype.draw = function () {
 	background(100);
+	this.GUI.draw();
+	//
 	Logger.draw();
 	this.birb.draw();
 };
 //-=-//
 Environment.prototype.onClick = function (mx, my) {
+	this.GUI.onClick(mx, my);
 	//
 	this.birb.onClick(mx, my);
 };
@@ -58,6 +63,87 @@ Environment.prototype.load_data = function (name) {
 Environment.prototype.save_data = function (s) {
 	
 }
+
+
+// -=-=-=-=- Environment GUI -=-=-=-=- //
+//
+var _GUI = function () {
+	this._data = {};
+	this._ID_enum = 1;
+	this._named = [];
+	this._objects = [this];
+	this._active = [];
+	this._children = [];
+	this._id = 0;
+	//
+};
+_GUI.prototype.update = function(){
+	for (var i = this._active.length - 1; i >= 0; i--) {
+		this._objects[this._active[i]].update();
+	}
+};
+_GUI.prototype.draw = function(){
+	for (var i = this._active.length - 1; i >= 0; i--) {
+		this._objects[this._active[i]].draw();
+	}
+};
+_GUI.prototype.onClick = function(mx, my){
+	for (var i = this._active.length - 1; i >= 0; i--) {
+		this._objects[this._active[i]].onClick(mx, my);
+	}
+};
+//
+_GUI.prototype._get_new_id = function () {return this._ID_enum++};
+_GUI.prototype._window_constructor = function (parent, data) {
+	win_id = this._get_new_id();
+	win = Object.assign({
+		GUI:this,
+		id:win_id,
+		parent:parent,
+		children:[],
+		//
+		build:function(){
+			console.log('building window!');
+		},
+		update:function(){},
+		draw:function(){},
+		//
+		onClick:function(mx, my){},
+		append_child:function(id){this.children.push(id);}
+	}, data);
+	//
+	win.build();
+	if (win.name) this._named[win.name] = win.id;
+	this._objects[win.id] = win;
+	return win;
+};
+_GUI.prototype._button_constructor = function(parent, data) {
+	o_id = this._get_new_id();
+	o = Object.assign({
+		id:o_id,
+		parent:parent,
+		//
+		update:function(){},
+		draw:function(){},
+		onClick:function(){}
+	}, data);
+	this._objects[o.id] = o;
+	this.get_object(parent).append_child(o.id);
+	return o;
+};
+//
+_GUI.prototype.new_window = function (data, parent) {
+	if (!parent) parent = this._id;
+	win = this._window_constructor(parent, data);
+	return win.id;
+};
+_GUI.prototype.new_button = function (data, parent) {
+	if (!parent) parent = this.new_window();
+	this._button_constructor(parent, data);
+	return parent;
+};
+_GUI.prototype.get_object = function (id) {return this._objects[id];};
+_GUI.prototype.append_child = function (id) {this._children.push(id);};
 
 
 // -=-=-=-=- Javascript Log -=-=-=-=- //
