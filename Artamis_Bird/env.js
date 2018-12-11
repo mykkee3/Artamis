@@ -10,9 +10,10 @@
 
 //
 
-
+// -=-=-=-=- Environment -=-=-=-=- //
 var Environment = function () {
 	//
+	this.viewports = new _Viewports();
 	this.GUI = new _GUI();
 	this.log = Logger.get_log('info', {verbose:true});
 	this.log.log('Starting Artamis!', {verbosity:true});
@@ -29,6 +30,7 @@ var Environment = function () {
 };
 //-=-//
 Environment.prototype.update = function () {
+	this.viewports.update();
 	this.GUI.update();
 	//
 	this.birb.update();
@@ -36,6 +38,7 @@ Environment.prototype.update = function () {
 };
 Environment.prototype.draw = function () {
 	background(100);
+	this.viewports.draw();
 	this.GUI.draw();
 	//
 	Logger.draw();
@@ -48,7 +51,7 @@ Environment.prototype.onClick = function (mx, my) {
 	this.birb.onClick(mx, my);
 };
 Environment.prototype.keyPressed = function (key) {
-	if (key == 53) document.location.reload();
+	if (key == 82) document.location.reload();
 	console.log("key pressed:", key);
 	//
 	
@@ -65,7 +68,83 @@ Environment.prototype.save_data = function (s) {
 }
 
 
+
+// -=-=-=-=- Environment Viewports -=-=-=-=- //
+//
+//
+var _Viewports = function () {
+	this._ID_enum = 0;
+	this._viewports = [];
+	this._viewports_table = {};
+
+};
+_Viewports.prototype._get_new_id = function () {return this._ID_enum++};
+_Viewports.prototype._viewport_constructor = function (name, data) {
+	viewport = Object.assign({
+		name:name,
+		id:this._get_new_id(),
+		parent:this,
+		//
+		width:100,
+		height:100,
+		pos:{x:0,y:0},
+		dim:{x:100,y:100},
+		active:true,
+		refresh:false,
+		debug:false,
+		//
+		_update:function(){
+			if (!this.refresh) return;
+			this.update();
+		},
+		update:function(){},
+		draw:function(){
+			if (!this.active) return;
+			image(this.graphic, this.pos.x, this.pos.y, this.dim.x, this.dim.y);
+			if (this.debug) {
+				push()
+				fill(0,0,0,0);
+				stroke(0,0,0,255);
+				rectMode(CORNER);
+				rect(this.pos.x, this.pos.y, this.dim.x, this.dim.y);
+				pop();
+			};
+		},
+		remove:function(){},
+
+	}, data);
+	viewport.graphic = createGraphics(viewport.width, viewport.height);
+	viewport.update();
+	this._viewports[viewport.id] = viewport;
+	this._viewports_table[viewport.name] = viewport.id;
+};
+//
+_Viewports.prototype.update = function () {
+	for (var i = this._viewports.length - 1; i >= 0; i--) {
+		this._viewports[i]._update();
+	}
+};
+_Viewports.prototype.draw = function () {
+	for (var i = this._viewports.length - 1; i >= 0; i--) {
+		this._viewports[i].draw();
+	}
+};
+//
+_Viewports.prototype.new = function (name, data) {
+	this._viewport_constructor(name, data);
+	return this.get(name);
+};
+_Viewports.prototype.get = function (name) {
+	return this._viewports[this._viewports_table[name]];
+};
+_Viewports.prototype.get_graphic = function (name) {
+	return this._viewports[this._viewports_table[name]].graphic;
+};
+
+
+
 // -=-=-=-=- Environment GUI -=-=-=-=- //
+//
 //
 var _GUI = function () {
 	this._data = {};
@@ -147,6 +226,8 @@ _GUI.prototype.append_child = function (id) {this._children.push(id);};
 
 
 // -=-=-=-=- Javascript Log -=-=-=-=- //
+//
+//
 var Logger = {
 	_LOG_costructor : function (parent, name, data) {
 		o = {
