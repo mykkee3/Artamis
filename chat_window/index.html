@@ -1,0 +1,68 @@
+<!DOCTYPE>
+<html>
+<head>
+	<title>Game Tester</title>
+	<link rel="stylesheet" href="style.css">
+
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<!-- script src="//cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.7/p5.js"></script -->
+	<!-- // <script src="//cdn.rawgit.com/lmccart/p5.js/master/lib/addons/p5.dom.js"></script> -->
+
+	<script type="text/javascript">
+		//-=-=-=-=-=-=- Functions -=-=-=-=-=-=-//
+		var dn = function() {
+			console.log('done loading!');
+			chat = new Chat();
+			chat.init();
+			return;
+		};
+		// callbacks
+		$(document).ready(function () {
+			$.getJSON("./manifest.json", function(json_data) {
+				// Loads all scripts in manifest
+				var i = 0;
+				function loadScript(url, cb){
+					if(!url){
+						dn();
+						return;
+					};
+					console.log("loading: "+url);
+					$.getScript(url)
+					.done(cb)
+					.fail(function () {
+						console.log('failed to load script');
+					});
+				}
+				function cb () {
+					loadScript(json_data.scripts[i++], cb);
+				}
+				cb();
+			});
+		});
+
+		
+	</script>
+
+	
+
+</head>
+<body>
+
+<div id='window_cont'>
+	<div id='window'>
+		<div id='message_cont'>
+			<div id='messages'>
+
+			</div>
+		</div>
+		<div id='input_cont'>
+			<form id='input' name='input' onsubmit='chat.submit(); return false;' action='#' autocomplete="off">
+				<input type='text' name='textbox' value=''>
+				<button type='submit'>Talk</button>
+			</form>
+		</div>
+	</div>
+</div>
+
+</body>
+</html>

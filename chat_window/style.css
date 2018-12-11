@@ -1,0 +1,62 @@
+body {
+
+}
+form {
+	padding: 0;
+	margin: 0;
+}
+
+#window_cont {
+	margin: auto;
+	width: 400px;
+	border: 2px solid #ddd;
+	padding: 5px;
+}
+	
+#message_cont {
+	height: 500px;
+	border: 1px solid #aaa;
+	overflow-y: scroll;
+	padding: 5px;
+}
+#input {
+	margin-top: 5;
+}
+#input > input {
+	font-family: 'Times';
+	font-style: normal;
+	font-size: 16;
+	width: 90%;
+	height: 30px;
+}
+#input > button {
+	font-family: 'Times';
+	font-style: normal;
+	font-size: 16;
+	float: right;
+	width: 10%;
+	height: 30px;
+}
+button:hover {
+	background: #eee;
+}
+.alert {
+	font-style: italic;
+	color: rgb(150,150,200);
+}
+.msg {
+}
+.msg::before {
+	content: attr(user) ' : ';
+}
+
+#messages {
+
+}
+#messages > p {
+	padding: 5;
+	margin: 0;
+	overflow: auto;
+	position: relative;
+	border-bottom: 1px solid #bbb;
+}

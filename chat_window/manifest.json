@@ -1,0 +1,12 @@
+{
+	"conf" : {
+		"title" : "Bird chatkit-client",
+		"desc" : "bird",
+		"embeded" : true,
+		"enable_p5" : false
+	},
+	"scripts" : [
+		"//unpkg.com/@pusher/chatkit-client@1/dist/web/chatkit.js",
+		"./chat.js"
+	]
+}

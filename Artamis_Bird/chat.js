@@ -56,40 +56,34 @@ function Chat(parent) {
 		}
 	};
 	this.recieve = function (message) {
+		if (message.senderId == 'artamis') return;
+
 		msg = `Received new message: ${message.senderId} >> ${message.text}`
-		console.log(msg);
 		this.parent.log.log(msg);
+
+		this.parse_msg(message.text);
 	};
 
-	this.send = function (data) {
+	this.send = function (msg) {
 		// 
-		console.log("sending message : ping");
+		var currentUser = chatManager.currentUser;
+		currentUser.sendMessage({
+			text: msg,
+			roomId: currentUser.rooms[0].id
+		});
+		message = `Sending message: ${msg}`
+		this.parent.log.log(message);
 	}
 
-	// this.submit = function () {
-	// 	var msg = document.forms['input']['textbox'].value;
-	// 	if (msg !== '') {
-	// 		document.forms['input']['textbox'].value = '';
-	// 		this.message_add(msg, 'user');
-	// 		//
-	// 		if(this.parent.birb) this.parent.birb.msg_in(msg, {});
-	// 	}
-	// };
-
-	// // messages //
-
-	// this.alert = function (msg) {
-	// 	this.message_add(msg, null, 'alert');
-	// };
-
-	// this.message_add = function (msg, usr, typ) {
-	// 	typ = typ || 'msg';
-	// 	var msgs = document.getElementById('messages');
-	// 	var p = document.createElement('p');
-	// 	p.className = typ;
-	// 	p.innerHTML = msg;
-	// 	p.setAttribute('user', usr);
-	// 	msgs.appendChild(p);
-
-	// };
+	
+	this.parse_msg = function (message) {
+		if (message == 'ping') {
+			msg = 'I heard a ping!!! Hello from Artamis ^v^';
+			this.send(msg);
+		}else if (message == 'hello') {
+			msg = 'Hi... please talk to me more... I am eager to learn ^v^';
+			this.send(msg);
+		}
+	
+	};
 }
