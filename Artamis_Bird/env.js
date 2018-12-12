@@ -184,11 +184,25 @@ _GUI.prototype._window_constructor = function (parent, data) {
 		build:function(){
 			console.log('building window!');
 		},
-		update:function(){},
-		draw:function(){},
+		update:function(){
+			for (var i = this.children.length - 1; i >= 0; i--) {
+				this.GUI.get_object(this.children[i]).update();
+			}
+		},
+		draw:function(){
+			for (var i = this.children.length - 1; i >= 0; i--) {
+				this.GUI.get_object(this.children[i]).draw();
+			}
+		},
 		//
-		onClick:function(mx, my){},
-		append_child:function(id){this.children.push(id);}
+		onClick:function(mx, my){
+			for (var i = this.children.length - 1; i >= 0; i--) {
+				if (this.GUI.get_object(this.children[i]).onClick) this.GUI.get_object(this.children[i])._onClick(mx,my);
+			}
+		},
+		append_child:function(id){this.children.push(id);},
+		set_active:function(){this.GUI._active.push(this.id)},
+		set_inactive:function(){this.GUI._active.splicr(this.GUI._active.indexOf(this.id),1)}
 	}, data);
 	//
 	win.build();
@@ -202,9 +216,27 @@ _GUI.prototype._button_constructor = function(parent, data) {
 		id:o_id,
 		parent:parent,
 		//
+		pos:{x:100,y:100},
+		dim:{x:100,y:50},
+		col:{r:200,g:50,b:50},
+		label:'Button',
+		//
 		update:function(){},
-		draw:function(){},
-		onClick:function(){}
+		draw:function(){
+			push();
+			fill(this.col.r, this.col.g, this.col.b, 255);
+			stroke(0,0,0,255);
+			rect(this.pos.x, this.pos.y, this.dim.x, this.dim.y);
+			fill(0,0,0);
+			noStroke();
+			textAlign(CENTER, CENTER);
+			text(this.label, this.pos.x, this.pos.y, this.dim.x, this.dim.y);
+			pop();
+		},
+		_onClick:function(mx,my){
+			if (collidePointRect(mx,my, this.pos.x, this.pos.y, this.dim.x, this.dim.y)) this.onClick();
+		},
+		onClick:function(){console.log(`Button#${this.id} pressed`)}
 	}, data);
 	this._objects[o.id] = o;
 	this.get_object(parent).append_child(o.id);
