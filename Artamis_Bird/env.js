@@ -8,14 +8,46 @@
 
 // Globals and Constants //
 
+
+function textHeight(text, maxWidth) {
+	//https://gist.github.com/studioijeoma/942ced6a9c24a4739199
+	var words = text.split(' ');
+	var line = '';
+	var h = textLeading();
+
+	for (var i = 0; i < words.length; i++) {
+		var testLine = line + words[i] + ' ';
+		var testWidth = drawingContext.measureText(testLine).width;
+
+		if (testWidth > maxWidth && i > 0) {
+			line = words[i] + ' ';
+			h += textLeading();
+		} else {
+			line = testLine;
+		}
+	}
+
+	return h;
+}
+
 //
 
 // -=-=-=-=- Environment -=-=-=-=- //
 var Environment = function () {
 	//
-	this.viewports = new _Viewports();
-	this.GUI = new _GUI();
 	this.log = Logger.get_log('info', {verbose:true});
+	//
+	this.viewports = new _Viewports(this);
+	this.GUI = new _GUI(this);
+	this.log_viewport = this.viewports.new('Log',{
+		refresh:true,
+		debug:true,
+		dim:{x:width/2, y:height/2},
+		pos:{x:0, y:height/2},
+		width:width/2,
+		height:height/2
+	});
+	//
 	this.log.log('Starting Artamis!', {verbosity:true});
 	//
 	this.birb = new Birb();
@@ -26,6 +58,54 @@ var Environment = function () {
 	this.log.log('Done starting Artamis');
 	//
 	Logger.get_log('error', {verbose:true}).log('testing error');
+	//
+
+	win = this.GUI.new_window({
+		name:'TopMenu',
+		_build:[
+			{type:'button',data:{
+				label:'Open Menu',
+				pos:{x:10,y:10},
+				onClick:function(){
+					this.GUI.get_named_object('TopMenu').set_inactive();
+					this.GUI.get_named_object('Menu').set_active();
+				}
+			}},
+			{type:'window',data:{
+				name:'Menu',
+				active:false,
+				_build:[
+					{type:'button',data:{
+						label:'Close Menu',
+						pos:{x:10,y:10},
+						onClick:function(){
+							this.GUI.get_named_object('TopMenu').set_active();
+							this.GUI.get_named_object('Menu').set_inactive();
+						}
+					}},
+					{type:'button',data:{
+						label:'Ping',
+						pos:{x:110,y:10},
+						col:{r:50,g:100,b:200},
+						onClick:function(){
+							this.GUI.parent.chat.send('Ping... there was a button press. ^v^');
+						}
+					}},
+					{type:'button',data:{
+						label:'Test',
+						pos:{x:10,y:60},
+						col:{r:50,g:100,b:200},
+						onClick:function(){
+							this.GUI.log.log('testing\ntesting');
+
+						}
+					}},
+				]
+			}},
+		]
+	});
+	console.log('Menu:', win);
+
 	//
 };
 //-=-//
@@ -41,7 +121,7 @@ Environment.prototype.draw = function () {
 	this.viewports.draw();
 	this.GUI.draw();
 	//
-	Logger.draw();
+	Logger.draw(this.log_viewport.graphic);
 	this.birb.draw();
 };
 //-=-//
@@ -72,7 +152,8 @@ Environment.prototype.save_data = function (s) {
 // -=-=-=-=- Environment Viewports -=-=-=-=- //
 //
 //
-var _Viewports = function () {
+var _Viewports = function (parent) {
+	this.parent = parent;
 	this._ID_enum = 0;
 	this._viewports = [];
 	this._viewports_table = {};
@@ -85,10 +166,10 @@ _Viewports.prototype._viewport_constructor = function (name, data) {
 		id:this._get_new_id(),
 		parent:this,
 		//
-		width:100,
-		height:100,
+		width:width,
+		height:height,
 		pos:{x:0,y:0},
-		dim:{x:100,y:100},
+		dim:{x:width,y:height},
 		active:true,
 		refresh:false,
 		debug:false,
@@ -98,9 +179,11 @@ _Viewports.prototype._viewport_constructor = function (name, data) {
 			this.update();
 		},
 		update:function(){},
-		draw:function(){
+		_draw:function(){
 			if (!this.active) return;
+			this.draw();
 			image(this.graphic, this.pos.x, this.pos.y, this.dim.x, this.dim.y);
+			//
 			if (this.debug) {
 				push()
 				fill(0,0,0,0);
@@ -110,6 +193,7 @@ _Viewports.prototype._viewport_constructor = function (name, data) {
 				pop();
 			};
 		},
+		draw:function(){},
 		remove:function(){},
 
 	}, data);
@@ -126,7 +210,7 @@ _Viewports.prototype.update = function () {
 };
 _Viewports.prototype.draw = function () {
 	for (var i = this._viewports.length - 1; i >= 0; i--) {
-		this._viewports[i].draw();
+		this._viewports[i]._draw();
 	}
 };
 //
@@ -146,15 +230,20 @@ _Viewports.prototype.get_graphic = function (name) {
 // -=-=-=-=- Environment GUI -=-=-=-=- //
 //
 //
-var _GUI = function () {
+var _GUI = function (parent) {
+	this.parent = parent;
 	this._data = {};
 	this._ID_enum = 1;
-	this._named = [];
+	this._named = {};
 	this._objects = [this];
 	this._active = [];
 	this._children = [];
 	this._id = 0;
+	this._viewport = this.parent.viewports.new('GUI', {
+		refresh:true
+	});
 	//
+	this.log = Logger.get_log('info');
 };
 _GUI.prototype.update = function(){
 	for (var i = this._active.length - 1; i >= 0; i--) {
@@ -162,6 +251,7 @@ _GUI.prototype.update = function(){
 	}
 };
 _GUI.prototype.draw = function(){
+	this._viewport.graphic.clear();
 	for (var i = this._active.length - 1; i >= 0; i--) {
 		this._objects[this._active[i]].draw();
 	}
@@ -170,6 +260,12 @@ _GUI.prototype.onClick = function(mx, my){
 	for (var i = this._active.length - 1; i >= 0; i--) {
 		this._objects[this._active[i]].onClick(mx, my);
 	}
+};
+_GUI.prototype.show = function(){
+	this.parent.viewports.get(this._viewport).active = true;
+};
+_GUI.prototype.hide = function(){
+	this.parent.viewports.get(this._viewport).active = false;
 };
 //
 _GUI.prototype._get_new_id = function () {return this._ID_enum++};
@@ -181,8 +277,24 @@ _GUI.prototype._window_constructor = function (parent, data) {
 		parent:parent,
 		children:[],
 		//
+		active:true,
+		//
 		build:function(){
-			console.log('building window!');
+			if (!this._build) return;
+			for (var i = this._build.length - 1; i >= 0; i--) {
+				var obj = this._build[i];
+				switch (obj.type) {
+					case 'window':
+						this.GUI.new_window(obj.data, this.id);
+						break;
+					case 'button':
+						this.GUI.new_button(obj.data, this.id);
+						break;
+					default:
+						break;
+				}
+			}
+			console.log('done building window')
 		},
 		update:function(){
 			for (var i = this.children.length - 1; i >= 0; i--) {
@@ -202,36 +314,39 @@ _GUI.prototype._window_constructor = function (parent, data) {
 		},
 		append_child:function(id){this.children.push(id);},
 		set_active:function(){this.GUI._active.push(this.id)},
-		set_inactive:function(){this.GUI._active.splicr(this.GUI._active.indexOf(this.id),1)}
+		set_inactive:function(){this.GUI._active.splice(this.GUI._active.indexOf(this.id),1)}
 	}, data);
 	//
-	win.build();
 	if (win.name) this._named[win.name] = win.id;
+	if (win.active) win.set_active();
 	this._objects[win.id] = win;
+	win.build();
 	return win;
 };
 _GUI.prototype._button_constructor = function(parent, data) {
 	o_id = this._get_new_id();
 	o = Object.assign({
 		id:o_id,
+		GUI:this,
 		parent:parent,
 		//
 		pos:{x:100,y:100},
-		dim:{x:100,y:50},
+		dim:{x:90,y:40},
 		col:{r:200,g:50,b:50},
 		label:'Button',
 		//
 		update:function(){},
 		draw:function(){
-			push();
-			fill(this.col.r, this.col.g, this.col.b, 255);
-			stroke(0,0,0,255);
-			rect(this.pos.x, this.pos.y, this.dim.x, this.dim.y);
-			fill(0,0,0);
-			noStroke();
-			textAlign(CENTER, CENTER);
-			text(this.label, this.pos.x, this.pos.y, this.dim.x, this.dim.y);
-			pop();
+			graphic = this.GUI._viewport.graphic;
+			graphic.push();
+			graphic.fill(this.col.r, this.col.g, this.col.b, 255);
+			graphic.stroke(0,0,0,255);
+			graphic.rect(this.pos.x, this.pos.y, this.dim.x, this.dim.y);
+			graphic.fill(0,0,0);
+			graphic.noStroke();
+			graphic.textAlign(CENTER, CENTER);
+			graphic.text(this.label, this.pos.x, this.pos.y, this.dim.x, this.dim.y);
+			graphic.pop();
 		},
 		_onClick:function(mx,my){
 			if (collidePointRect(mx,my, this.pos.x, this.pos.y, this.dim.x, this.dim.y)) this.onClick();
@@ -253,8 +368,10 @@ _GUI.prototype.new_button = function (data, parent) {
 	this._button_constructor(parent, data);
 	return parent;
 };
+_GUI.prototype.get_named_object = function(name) {return this.get_object(this._named[name])};
 _GUI.prototype.get_object = function (id) {return this._objects[id];};
 _GUI.prototype.append_child = function (id) {this._children.push(id);};
+
 
 
 // -=-=-=-=- Javascript Log -=-=-=-=- //
@@ -269,12 +386,13 @@ var Logger = {
 			_log_file : "",
 			//
 			log : function (msg, data) {
+				if (!this.data.verbose && !data.verbosity) return;
+				msg = msg.trim().replace(/\n\r|\n|\r|\t/, ' || ');
 				time = new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().slice(11,-1);
 				data = Object.assign({
 					verbosity:false
 				}, data);
 				prefix = "Logger."+this.name+"("+time+"): ";
-				if (!this.data.verbose && !data.verbosity) return;
 				this._log_file += prefix+msg+"\n";
 				this.parent._log_file += prefix+msg+"\n";
 				console.log(prefix+msg);
@@ -287,8 +405,6 @@ var Logger = {
 	_logs : {},
 	_log_file : "",
 	_data : {
-		pos:[10,200],
-		size:[300,300],
 		verbose:false
 	},
 	//
@@ -298,14 +414,28 @@ var Logger = {
 		return this._logs[name];
 	},
 	//
-	draw : function (name) {
+	draw : function (graphic, name) {
 		log_obj = this._logs[name];
 		if (!log_obj) log_obj = this;
-		fill(0,0,0,0);
-		stroke(0,0,0,100);
-		rect(this._data.pos[0], this._data.pos[1], this._data.size[0], this._data.size[1]);
-		fill(0,0,0,255);
-		text(log_obj._log_file, this._data.pos[0], this._data.pos[1], this._data.size[0], this._data.size[1]);
+		lines = log_obj._log_file.split('\n');
+		output = [];
+		count = 0;
+		w = graphic.width;
+		for (var i = lines.length - 1; i >= 0; i--) {
+			h = textHeight(lines[i], w);
+			count += h;
+			output.push(lines[i]);
+			if (count > graphic.height) break;
+		}
+		y_offset = graphic.height-count;
+		//console.log(y_offset);
+		output.reverse();
+		output = output.join('\n');
+		//
+		graphic.clear();
+		graphic.background(100,100,100,100);
+		graphic.fill(0,0,0,255);
+		graphic.text(output, 5, 25+y_offset, w);
 	}
 };
 
