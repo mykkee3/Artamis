@@ -17,6 +17,7 @@ function setup () {
 	myCanvas.parent('game-container');
 	// Init //
 	enviroment = new Environment();
+	enviroment.init();
 
 	enviroment.load_data('test');
 }
