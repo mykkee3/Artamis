@@ -1,6 +1,6 @@
 // classes
 
-function Birb() {
+Birb = function () {
 
 	this.anm = new Animator(this);
 	this.AI = new AI(this);
@@ -16,7 +16,11 @@ function Birb() {
 }
 Birb.prototype.init = function () {
 	//
-	this.post({'type': 'start'});
+	this.viewport = enviroment.viewports.new('Birb',{
+		refresh:true
+	});
+	this.graphic = this.viewport.graphic
+	this.post({'type': 'start'}); // let server know we are up.
 }
 Birb.prototype.update = function () {
 	this.anm.update();
@@ -117,7 +121,6 @@ Animator.prototype.update = function () {
 	this.attr_data.eye_brow_h = constrain(map(noise(frameCount*0.001), 0,1, -1,1), -1, 1);
 }
 Animator.prototype.draw = function () {
-	push();
 	var eye_openess = 1 - constrain(this.attr_data.eye_openess, 0,1);
 	var brow_rot = constrain(this.attr_data.eye_brow_rot, -0.5, 0.5)/(0.75+eye_openess);
 	var brow_h = max(map(eye_openess, 0,1, -1,1),
@@ -128,15 +131,63 @@ Animator.prototype.draw = function () {
 	var eye_y = constrain(map(this.attr_data.eye_pos.y, 0, height, -1,1), -1, 1) * 10;
 	var blush_alpha = constrain(this.attr_data.blush_alpha, 0,1) * 255;
 	var blushd_alpha = constrain(this.attr_data.blushd_alpha, 0,1) * 255;
-	
-	translate(width/2, height/2);
-	
-	fill(255,255,255);
-	ellipse(0,0,10,10);
 
+	var eye_col = {r:50, g:150, b:120}
+
+	var graphic = this.parent.graphic;
+	
+	graphic.clear();
+	//
+	graphic.push();
+	graphic.translate(width/2, height/2);
+	//
+	graphic.fill(255,255,255);
+	//graphic.ellipse(eye_x,eye_y,10,10);
+	//graphic.ellipse(0,0,2,2);
+	//
+
+	//Eyes
+	graphic.strokeJoin(ROUND);
+	graphic.strokeWeight(40);
+	graphic.stroke(eye_col.r, eye_col.g, eye_col.b);
+	graphic.fill(eye_col.r, eye_col.g, eye_col.b);
+
+	//Left Eye
+	offset_x = -100;
+	offset_y = -50;
+	graphic.beginShape();
+	graphic.vertex(eye_x-40+offset_x, eye_y-40+offset_y);//BL
+	graphic.vertex(eye_x-40+offset_x, eye_y+40+offset_y);//TL
+	graphic.vertex(eye_x+40+offset_x, eye_y+40+offset_y);//TR
+	graphic.vertex(eye_x+40+offset_x, eye_y-40+offset_y);//BR
+	graphic.endShape(CLOSE);
+
+	//Right Eye
+	offset_x = 100;
+	offset_y = -50;
+	graphic.beginShape();
+	graphic.vertex(eye_x-40+offset_x, eye_y-40+offset_y);//BL
+	graphic.vertex(eye_x-40+offset_x, eye_y+40+offset_y);//TL
+	graphic.vertex(eye_x+40+offset_x, eye_y+40+offset_y);//TR
+	graphic.vertex(eye_x+40+offset_x, eye_y-40+offset_y);//BR
+	graphic.endShape(CLOSE);
+
+	//Beak
+	graphic.strokeWeight(5);
+	//graphic.noFill();
+	//
+	offset_x = 0;
+	offset_y = 80;
+	graphic.beginShape();
+	graphic.vertex(-60+offset_x, -20+offset_y);//Left
+	graphic.vertex(offset_x, 60+offset_y);//Bottom
+	graphic.vertex(60+offset_x, -20+offset_y);//Right
+	graphic.vertex(offset_x, 50+offset_y);//TOP
+	graphic.endShape(CLOSE);
+
+	graphic.pop();
 	// back
 
-	pop();
 }
 Animator.prototype._states = {
 	init:{
