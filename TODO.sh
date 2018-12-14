@@ -8,3 +8,22 @@
 #		
 #	TODO.sh
 #		- make shell script that edits its own comments to colate all TODO statements
+
+#
+#
+#
+# add - popcorn (popup at bottom)
+# add - button click animation
+# add - face animations
+# add - auto menu builder
+# add - viewport draw priority
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#

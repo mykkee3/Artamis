@@ -41,6 +41,7 @@ var Environment = function () {
 	this.GUI = new _GUI(this);
 	this.log_viewport = this.viewports.new('Log',{
 		refresh:true,
+		active:false,
 		debug:true,
 		dim:{x:width/2, y:height/2},
 		pos:{x:0, y:height/2},
@@ -51,11 +52,7 @@ var Environment = function () {
 	this.log.log('Starting Artamis!', {verbosity:true});
 	//
 	this.birb = new Birb();
-	this.log.log('Initializing Birb');
-	this.birb.init();
 	this.chat = new Chat(this);
-	this.chat.init();
-	this.log.log('Done starting Artamis');
 	//
 	Logger.get_log('error', {verbose:true}).log('testing error');
 	//
@@ -92,6 +89,14 @@ var Environment = function () {
 						}
 					}},
 					{type:'button',data:{
+						label:'Toggle Log',
+						pos:{x:210,y:10},
+						col:{r:50,g:200,b:100},
+						onClick:function(){
+							this.GUI.parent.log_viewport.toggle();
+						}
+					}},
+					{type:'button',data:{
 						label:'Test',
 						pos:{x:10,y:60},
 						col:{r:50,g:100,b:200},
@@ -108,6 +113,12 @@ var Environment = function () {
 
 	//
 };
+Environment.prototype.init = function () {
+	this.log.log('Initializing Birb');
+	this.birb.init();
+	this.log.log('Done starting Artamis');
+	this.chat.init();
+};
 //-=-//
 Environment.prototype.update = function () {
 	this.viewports.update();
@@ -117,7 +128,7 @@ Environment.prototype.update = function () {
 	
 };
 Environment.prototype.draw = function () {
-	background(100);
+	background(40);
 	this.viewports.draw();
 	this.GUI.draw();
 	//
@@ -175,7 +186,7 @@ _Viewports.prototype._viewport_constructor = function (name, data) {
 		debug:false,
 		//
 		_update:function(){
-			if (!this.refresh) return;
+			if (!this.refresh || !this.active) return;
 			this.update();
 		},
 		update:function(){},
@@ -194,6 +205,7 @@ _Viewports.prototype._viewport_constructor = function (name, data) {
 			};
 		},
 		draw:function(){},
+		toggle:function(){this.active = !this.active},
 		remove:function(){},
 
 	}, data);
