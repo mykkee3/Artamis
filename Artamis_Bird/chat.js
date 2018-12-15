@@ -80,6 +80,7 @@ function Chat(parent) {
 		if (message == 'ping') {
 			msg = 'I heard a ping!!! Hello from Artamis ^v^';
 			this.send(msg);
+			this.parent.GUI.popcorn(msg);
 		}else if (message == 'hello') {
 			msg = 'Hi... please talk to me more... I am eager to learn ^v^';
 			this.send(msg);
