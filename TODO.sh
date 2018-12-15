@@ -15,7 +15,7 @@
 # [x] add - GUI.popcorn (popup at bottom)
 # [ ] add - button click animation
 # [ ] add - face animations
-# [ ] add - auto menu builder
+# [x] add - auto menu builder
 # [x] add - viewport draw priority
 #
 #

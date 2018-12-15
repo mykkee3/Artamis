@@ -90,34 +90,10 @@ function Animator (parent) {
 	};
 }
 Animator.prototype.update = function () {
-	if(this.attr_data.eye_target && this.attr_data.eye_target.pos){
-		var target = this.attr_data.eye_target.pos.copy();
-		var d = p5.Vector.sub(target, this.attr_data.eye_pos);
-		d.limit(this.attr_data.eye_spd*60);
-		this.attr_data.eye_pos.add(d);
-	}
-
-	//sudo movements
-	// var eye_x = constrain(map(mouseX, 0, width, -1,1), -1, 1) * 10;
-	//this.attr_data.eye_openess = constrain(map(mouseY, 0, height, 0,1), -1, 1);
-	if(this.attr_data.eye_count<frameCount){
-		this.attr_data.eye_count = frameCount + random(10,500);
-		if(this.attr_data.eye_target_type){
-			this.attr_data.eye_target = this.parent.pointer;
-		}else{
-			this.attr_data.eye_target = {'pos':createVector(random(width), random(height))};
-		}
-		this.attr_data.eye_target_type = !this.attr_data.eye_target_type;
-	}
-	if(this.attr_data.eye_blink_count<frameCount){
-		this.attr_data.eye_blink_count = frameCount + random(10,50);
-		//do blink
-	}
-	this.attr_data.eye_brow_rot = constrain(map(noise(frameCount*0.001+1000), 0, 1, -1,1), -0.5, 0.5);
-	this.attr_data.eye_brow_h = constrain(map(noise(frameCount*0.001), 0,1, -1,1), -1, 1);
+	this.FSM.Execute();
 }
 Animator.prototype.draw = function () {
-	var eye_openess = 1 - constrain(this.attr_data.eye_openess, 0,1);
+	var eye_openess = constrain(this.attr_data.eye_openess, 0,1);
 	var brow_rot = constrain(this.attr_data.eye_brow_rot, -0.5, 0.5)/(0.75+eye_openess);
 	var brow_h = max(map(eye_openess, 0,1, -1,1),
 			constrain(
@@ -125,6 +101,8 @@ Animator.prototype.draw = function () {
 				-1, 1)) * 8;
 	var eye_x = constrain(map(this.attr_data.eye_pos.x, 0, width, -1,1), -1, 1) * 10;
 	var eye_y = constrain(map(this.attr_data.eye_pos.y, 0, height, -1,1), -1, 1) * 10;
+	var eye_pos = createVector(eye_x, eye_y);
+	eye_y = eye_pos.y*eye_openess;
 	var blush_alpha = constrain(this.attr_data.blush_alpha, 0,1) * 255;
 	var blushd_alpha = constrain(this.attr_data.blushd_alpha, 0,1) * 255;
 
@@ -145,28 +123,30 @@ Animator.prototype.draw = function () {
 
 	//Eyes
 	graphic.strokeJoin(ROUND);
-	graphic.strokeWeight(40);
+	graphic.strokeWeight(40*(eye_openess+0.5)/2);
 	graphic.stroke(eye_col.r, eye_col.g, eye_col.b);
 	graphic.fill(eye_col.r, eye_col.g, eye_col.b);
 
 	//Left Eye
 	offset_x = -100;
 	offset_y = -50;
+	left_eye_openess = 1-eye_openess;
 	graphic.beginShape();
-	graphic.vertex(eye_x-40+offset_x, eye_y-40+offset_y);//BL
-	graphic.vertex(eye_x-40+offset_x, eye_y+40+offset_y);//TL
-	graphic.vertex(eye_x+40+offset_x, eye_y+40+offset_y);//TR
-	graphic.vertex(eye_x+40+offset_x, eye_y-40+offset_y);//BR
+	graphic.vertex(eye_x-40+offset_x-30*left_eye_openess, eye_y-40+offset_y+50*left_eye_openess);//TL
+	graphic.vertex(eye_x-40+offset_x-30*left_eye_openess, eye_y+40+offset_y-30*left_eye_openess);//BL
+	graphic.vertex(eye_x+40+offset_x+20*left_eye_openess, eye_y+40+offset_y-30*left_eye_openess);//BR
+	graphic.vertex(eye_x+40+offset_x+20*left_eye_openess, eye_y-40+offset_y+50*left_eye_openess);//TR
 	graphic.endShape(CLOSE);
 
 	//Right Eye
 	offset_x = 100;
 	offset_y = -50;
+	right_eye_openess = 1-eye_openess;
 	graphic.beginShape();
-	graphic.vertex(eye_x-40+offset_x, eye_y-40+offset_y);//BL
-	graphic.vertex(eye_x-40+offset_x, eye_y+40+offset_y);//TL
-	graphic.vertex(eye_x+40+offset_x, eye_y+40+offset_y);//TR
-	graphic.vertex(eye_x+40+offset_x, eye_y-40+offset_y);//BR
+	graphic.vertex(eye_x-40+offset_x-20*right_eye_openess, eye_y-40+offset_y+50*right_eye_openess);//TL
+	graphic.vertex(eye_x-40+offset_x-20*right_eye_openess, eye_y+40+offset_y-30*right_eye_openess);//BL
+	graphic.vertex(eye_x+40+offset_x+30*right_eye_openess, eye_y+40+offset_y-30*right_eye_openess);//BR
+	graphic.vertex(eye_x+40+offset_x+30*right_eye_openess, eye_y-40+offset_y+50*right_eye_openess);//TR
 	graphic.endShape(CLOSE);
 
 	//Beak
@@ -187,11 +167,60 @@ Animator.prototype.draw = function () {
 
 }
 Animator.prototype._states = {
-	//init:''
+	init:'idle',
 	idle:{
-		Execute:function(){}
+		Execute:function(){
+					if(this.agent.attr_data.eye_target && this.agent.attr_data.eye_target.pos){
+				var target = this.agent.attr_data.eye_target.pos.copy();
+				var d = p5.Vector.sub(target, this.agent.attr_data.eye_pos);
+				d.limit(this.agent.attr_data.eye_spd*60);
+				this.agent.attr_data.eye_pos.add(d);
+			}
+
+			//sudo movements
+			// var eye_x = constrain(map(mouseX, 0, width, -1,1), -1, 1) * 10;
+			//this.agent.attr_data.eye_openess = constrain(map(mouseY, 0, height, 0,1), -1, 1);
+			if(this.agent.attr_data.eye_count<frameCount){
+				this.agent.attr_data.eye_count = frameCount + random(10,500);
+				if(this.agent.attr_data.eye_target_type){
+					this.agent.attr_data.eye_target = this.agent.parent.pointer;
+				}else{
+					this.agent.attr_data.eye_target = {'pos':createVector(random(width), random(height))};
+				}
+				this.agent.attr_data.eye_target_type = !this.agent.attr_data.eye_target_type;
+			}
+			if(this.agent.attr_data.eye_blink_count<frameCount){
+				this.agent.attr_data.eye_blink_count = frameCount + random(10,50);
+				//do blink
+			}
+			this.agent.attr_data.eye_brow_rot = constrain(map(noise(frameCount*0.001+1000), 0, 1, -1,1), -0.5, 0.5);
+			this.agent.attr_data.eye_brow_h = constrain(map(noise(frameCount*0.001), 0,1, -1,1), -1, 1);
+		}
+	},
+	blink:{
+		Enter:function(){
+			this.data.state = 0;
+		},
+		Execute:function(){
+			this.FSM.states['idle'].Execute();
+			switch(this.data.state){
+				case 0:
+					this.agent.attr_data.eye_openess -= 0.25;
+					if(this.agent.attr_data.eye_openess <= 0) this.data.state++;
+					break;
+				case 1:
+					this.agent.attr_data.eye_openess += 0.1;
+					if(this.agent.attr_data.eye_openess >= 1) {
+						this.agent.attr_data.eye_openess = 1;
+						this.FSM.setState('idle');
+					}
+					break;
+			}
+
+		},
+		Exit:function(){}
 	}
-}
+};
 
 function AI (entity) {
 	this.entity = entity;
