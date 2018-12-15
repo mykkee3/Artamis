@@ -1,9 +1,18 @@
 /*
-// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- //
-//				-=- Environment -=-		   //
-//										   //
-// doc string thing						   //
-// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- //
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+//				-=- Environment -=-	
+//	
+//	- notes:
+// 
+//
+//  - viewport priorities
+// default:-1
+// background:0	
+// foreground:1
+// front:2
+//	
+// doc string thing	
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 */
 
 // Globals and Constants //
@@ -11,6 +20,7 @@
 
 function textHeight(text, maxWidth) {
 	//https://gist.github.com/studioijeoma/942ced6a9c24a4739199
+	// modified*
 	var words = text.split(' ');
 	var line = '';
 	var h = textLeading();
@@ -56,61 +66,74 @@ var Environment = function () {
 	//
 	Logger.get_log('error', {verbose:true}).log('testing error');
 	//
-
+	enum_i = 1;
 	win = this.GUI.new_window({
 		name:'TopMenu',
 		_build:[
-			{type:'button',data:{
-				label:'Open Menu',
-				pos:{x:10,y:10},
-				onClick:function(){
-					this.GUI.get_named_object('TopMenu').set_inactive();
-					this.GUI.get_named_object('Menu').set_active();
-				}
-			}},
-			{type:'window',data:{
+			{build:'submenu', data:{
 				name:'Menu',
-				active:false,
 				_build:[
-					{type:'button',data:{
-						label:'Close Menu',
-						pos:{x:10,y:10},
-						onClick:function(){
-							this.GUI.get_named_object('TopMenu').set_active();
-							this.GUI.get_named_object('Menu').set_inactive();
-						}
+					{build:'submenu', data:{
+						name:'Options',
+						_build:[
+							{build:'special_button',data:{
+								label:'Toggle Log',
+								onClick:function(){this.GUI.parent.log_viewport.toggle()}
+							}},
+							//{build:'button',data:{}},
+							//{build:'button',data:{}},
+						]
 					}},
-					{type:'button',data:{
-						label:'Ping',
-						pos:{x:110,y:10},
-						col:{r:50,g:100,b:200},
-						onClick:function(){
-							this.GUI.parent.chat.send('Ping... there was a button press. ^v^');
-						}
+					{build:'submenu', data:{
+						name:'Functions',
+						_build:[
+							{build:'special_button',data:{
+								label:'Ping',
+								onClick:function(){this.GUI.parent.chat.send('Ping!!! ^v^')}
+							}},
+							//{build:'button',data:{}},
+							//{build:'button',data:{}},
+						]
 					}},
-					{type:'button',data:{
-						label:'Toggle Log',
-						pos:{x:210,y:10},
-						col:{r:50,g:200,b:100},
-						onClick:function(){
-							this.GUI.parent.log_viewport.toggle();
-						}
+					{build:'submenu', data:{
+						name:'Face Control',
+						_build:[
+							{build:'special_button',data:{
+								label:'Idle',
+							}},
+							{build:'button',data:{
+								label:'Blink',
+							}},
+							{build:'button',data:{
+								label:'Blush',
+							}},
+							{build:'button',data:{
+								label:'Talk',
+							}},
+							{build:'button',data:{
+								label:'Suprised',
+							}},
+						]
 					}},
-					{type:'button',data:{
-						label:'Test',
-						pos:{x:10,y:60},
-						col:{r:50,g:100,b:200},
-						onClick:function(){
-							this.GUI.log.log('testing\ntesting');
-
-						}
+					{build:'submenu', data:{
+						name:'Body Control',
+						_build:[
+							{build:'button',data:{
+								label:'Toggle Wing',
+							}},
+							{build:'button',data:{
+								label:'Toggle LED',
+							}},
+						]
+					}},
+					{build:'special_button',data:{
+						label:'Run Test',
+						onClick:function(){this.GUI.parent.test()}
 					}},
 				]
-			}},
+			}}
 		]
 	});
-	console.log('Menu:', win);
-
 	//
 };
 Environment.prototype.init = function () {
@@ -119,6 +142,9 @@ Environment.prototype.init = function () {
 	this.log.log('Done starting Artamis');
 	this.chat.init();
 };
+Environment.prototype.test = function (){
+	console.log('test')
+}
 //-=-//
 Environment.prototype.update = function () {
 	this.viewports.update();
@@ -176,6 +202,7 @@ _Viewports.prototype._viewport_constructor = function (name, data) {
 		name:name,
 		id:this._get_new_id(),
 		parent:this,
+		priority:-1,
 		//
 		width:width,
 		height:height,
@@ -221,8 +248,10 @@ _Viewports.prototype.update = function () {
 	}
 };
 _Viewports.prototype.draw = function () {
-	for (var i = this._viewports.length - 1; i >= 0; i--) {
-		this._viewports[i]._draw();
+	var arr = this._viewports.slice();
+	arr.sort(function(a,b){return b.priority-a.priority;});
+	for (var i = arr.length - 1; i >= 0; i--) {
+		arr[i]._draw();
 	}
 };
 //
@@ -246,13 +275,17 @@ var _GUI = function (parent) {
 	this.parent = parent;
 	this._data = {};
 	this._ID_enum = 1;
+	this._IDP_enum = 0;
 	this._named = {};
 	this._objects = [this];
+	this._popcorn = null;
+	this._popqueue = [];
 	this._active = [];
 	this._children = [];
 	this._id = 0;
 	this._viewport = this.parent.viewports.new('GUI', {
-		refresh:true
+		refresh:true,
+		priority:2,
 	});
 	//
 	this.log = Logger.get_log('info');
@@ -261,12 +294,17 @@ _GUI.prototype.update = function(){
 	for (var i = this._active.length - 1; i >= 0; i--) {
 		this._objects[this._active[i]].update();
 	}
+	if(this._popcorn){this._popcorn.update();}
+	else if (this._popqueue.length){
+		this._popcorn = this._popcorn_constructor(this._popqueue.shift());
+	}
 };
 _GUI.prototype.draw = function(){
 	this._viewport.graphic.clear();
 	for (var i = this._active.length - 1; i >= 0; i--) {
 		this._objects[this._active[i]].draw();
 	}
+	if (this._popcorn) this._popcorn.draw();
 };
 _GUI.prototype.onClick = function(mx, my){
 	for (var i = this._active.length - 1; i >= 0; i--) {
@@ -281,6 +319,66 @@ _GUI.prototype.hide = function(){
 };
 //
 _GUI.prototype._get_new_id = function () {return this._ID_enum++};
+_GUI.prototype._popcorn_constructor = function (data) {
+	popcorn = Object.assign({
+		id:this._IDP_enum++,
+		GUI:this,
+		//
+		pos:{x:width/2,y:height},
+		dim:{x:width/2,y:50},
+		col:{r:100,g:100,b:100},
+		speed:1,
+		wait_time:2,
+		//
+		_states:{
+			init:'open',
+			open:{
+				Enter:function(){
+					console.log('popcorn:', this.agent.message)
+				},
+				Execute:function(){
+					this.agent.pos.y = constrain(this.agent.pos.y - this.agent.speed*5, height-this.agent.dim.y, height);
+					if(this.agent.pos.y == height-this.agent.dim.y){this.FSM.setState('wait')}
+				}
+			},
+			wait:{
+				Enter:function(){
+					console.log(`waiting ${this.agent.wait_time} seconds`);
+					var self = this;
+					after(1000*this.agent.wait_time, function(){self.FSM.setState('close')});
+				},
+				Execute:function(){}
+			},
+			close:{
+				Execute:function(){
+					this.agent.pos.y = constrain(this.agent.pos.y + this.agent.speed*5, height-this.agent.dim.y, height*2);
+					if(this.agent.pos.y > height+20){
+						this.FSM.setState('wait')
+						this.agent.GUI._popcorn = null;
+					}
+
+				}
+			},
+		},
+		//
+		update:function(){this.FSM.Execute()},
+		draw:function(){
+			var graphic = this.GUI._viewport.graphic;
+			graphic.push();
+			graphic.rectMode(CORNER);
+			graphic.stroke(0,0,0,200);
+			graphic.fill(this.col.r, this.col.g, this.col.b, 100)
+			graphic.rect(this.pos.x, this.pos.y, this.dim.x, this.dim.y);
+			//
+			graphic.fill(0,0,0,255);
+			graphic.noStroke();
+			graphic.text(this.message, this.pos.x+5, this.pos.y+10, this.dim.x, this.dim.y);
+			graphic.pop();
+		},
+	}, data);
+	popcorn.FSM = new SimpleFSM(popcorn);
+	return popcorn;
+};
 _GUI.prototype._window_constructor = function (parent, data) {
 	win_id = this._get_new_id();
 	win = Object.assign({
@@ -291,23 +389,47 @@ _GUI.prototype._window_constructor = function (parent, data) {
 		//
 		active:true,
 		//
-		build:function(){
+		build:function () {
+			var x_offset = 0;
+			var y_offset = 0;
+			//
 			if (!this._build) return;
+			//
+			for (var i = 0; i < this._build.length; i++) {
+				if (this._build[i].build) {
+					obj = Object.assign({
+						GUI:this.GUI,
+						parent:this.id
+					},this.GUI._menu_builds[this._build[i].build]);
+					Object.assign(obj, this._build[i].data);
+					//
+			 		//
+					if(obj._init_build) obj._init_build();
+					if(obj._super_build) {
+						for (var j = obj._super_build.length - 1; j >= 0; j--) {
+							this._build.push(obj._super_build[j]);
+						}
+					}
+					this._build[i] = obj;
+				}					
+			}
+			this._build = this._build.sort(function(a,b){return (a.priority||0)-(b.priority||0);})
 			for (var i = this._build.length - 1; i >= 0; i--) {
-				var obj = this._build[i];
-				switch (obj.type) {
+				switch (this._build[i].type) {
 					case 'window':
-						this.GUI.new_window(obj.data, this.id);
+						this.GUI.new_window(this._build[i], this.id);
 						break;
 					case 'button':
-						this.GUI.new_button(obj.data, this.id);
+						if (this._build[i].pos == undefined) this._build[i].pos = {x:10+(100*x_offset++),y:10+(50*y_offset)};
+						if (x_offset > 3) {x_offset=0;y_offset++;};
+						this.GUI.new_button(this._build[i], this.id);
 						break;
 					default:
 						break;
 				}
 			}
-			console.log('done building window')
 		},
+		//
 		update:function(){
 			for (var i = this.children.length - 1; i >= 0; i--) {
 				this.GUI.get_object(this.children[i]).update();
@@ -344,7 +466,7 @@ _GUI.prototype._button_constructor = function(parent, data) {
 		//
 		pos:{x:100,y:100},
 		dim:{x:90,y:40},
-		col:{r:200,g:50,b:50},
+		col:{r:50,g:150,b:150},
 		label:'Button',
 		//
 		update:function(){},
@@ -370,6 +492,77 @@ _GUI.prototype._button_constructor = function(parent, data) {
 	return o;
 };
 //
+_GUI.prototype._menu_builds = {
+
+	forward_button:{
+		type:'button',
+		col:{r:200,g:50,b:50},
+		priority:-1,
+		onClick:function(){
+			this.GUI.get_named_object(this.menu_f).set_active();
+			this.GUI.get_named_object(this.menu_b).set_inactive();
+		},
+		_init_build:function(){
+			this.label = this.label || this.menu_f;
+		}
+	},
+	back_button:{
+		type:'button',
+		col:{r:150,g:50,b:50},
+		priority:2,
+		onClick:function(){
+			this.GUI.get_named_object(this.menu_f).set_inactive();
+			this.GUI.get_named_object(this.menu_b).set_active();
+		},
+		_init_build:function(){
+			this.label = this.label || this.menu_b
+		}
+	},
+	button:{
+		type:'button',
+	},
+	special_button:{
+		type:'button',
+		col:{r:50,g:150,b:200},
+		priority:1	
+	},
+	//
+	submenu:{
+		type:'window',
+		active:false,
+		//
+		_init_build:function(){
+
+			this.parent_name = this.GUI.get_object(this.parent).name;			
+			this._build.push({
+				build:'back_button',
+				data:{
+					menu_f:this.name,
+					menu_b:this.parent_name
+				}
+			});
+			this._super_build = [
+				{
+					build:'forward_button',
+					data:{
+						menu_f:this.name,
+						menu_b:this.parent_name
+					}
+				}
+			];
+		}
+	}
+};
+//
+_GUI.prototype.popcorn = function (msg, data) {
+	// displays a message on the bottom of the screen
+	//
+	msg = msg.trim().split(/\n\r|\n|\r/).join(' || ');
+	this._popqueue.push(Object.assign({
+		message:msg,
+		dim:{x:width/2,y:textHeight(msg, width/2-10)+20}
+	},data));
+};
 _GUI.prototype.new_window = function (data, parent) {
 	if (!parent) parent = this._id;
 	win = this._window_constructor(parent, data);
@@ -467,8 +660,8 @@ var SimpleFSM = function (agent) {
 		var val;
 		for (var key in agent._states) {
 			val = agent._states[key];
-			if(key=='init'){this.setState(key);}
-			this.new_State(key,val);
+			if(key=='init'){this.setState(val);}
+			else {this.new_State(key,val);}
 		}
 	}
 };
