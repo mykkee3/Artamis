@@ -17,7 +17,8 @@ Birb = function () {
 Birb.prototype.init = function () {
 	//
 	this.viewport = enviroment.viewports.new('Birb',{
-		refresh:true
+		refresh:true,
+		priority:1
 	});
 	this.graphic = this.viewport.graphic
 	this.post({'type': 'start'}); // let server know we are up.
@@ -37,12 +38,7 @@ Birb.prototype.onClick = function (mx, my) {
 	//
 }
 Birb.prototype._states = {
-	init:{
-		Execute:function(){
-			//
-			this.FSM.setState('idle');
-		}
-	},
+	init:'idle',
 	idle:{
 		Execute:function(){
 			//console.log('idling');
@@ -137,6 +133,7 @@ Animator.prototype.draw = function () {
 	var graphic = this.parent.graphic;
 	
 	graphic.clear();
+	//graphic.background(40,40,40,100);
 	//
 	graphic.push();
 	graphic.translate(width/2, height/2);
@@ -190,7 +187,8 @@ Animator.prototype.draw = function () {
 
 }
 Animator.prototype._states = {
-	init:{
+	//init:''
+	idle:{
 		Execute:function(){}
 	}
 }
