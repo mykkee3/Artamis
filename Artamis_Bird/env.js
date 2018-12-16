@@ -647,7 +647,7 @@ var Logger = {
 
 
 // -=-=-=-=- Finite State Machine -=-=-=-=- //
-var SimpleFSM = function (agent) {
+var SimpleFSM = function (agent, states) {
 	this.agent = agent;
 	this.states = {};
 	this.current_state = {
@@ -657,10 +657,11 @@ var SimpleFSM = function (agent) {
 	this.current_isComplete = false;
 	this.current_transition = null;
 	//
-	if(agent&&agent._states){
+	if(agent&&(agent._states||states)){
 		var val;
-		for (var key in agent._states) {
-			val = agent._states[key];
+		var states = states || agent._states;
+		for (var key in states) {
+			val = states[key];
 			if(key=='init'){this.setState(val);}
 			else {this.new_State(key,val);}
 		}
@@ -707,3 +708,44 @@ SimpleFSM.prototype.new_State = function (state, data) {
 	this.states[state]=o;
 	return o;
 };
+
+
+// -=-=-=-=- Segmented Finite State Machine -=-=-=-=- //
+var SegmentedFSM = function (agent) {
+	//SimpleFSM.call(this, agent);
+	this.agent = agent;
+	this.segments = {};
+	this.initial_state = null;
+
+	if(agent&&agent._segments){
+		var val;
+		for (var key in agent._segments) {
+			val = agent._segments[key];
+			this.new_Segment(key,val);
+		}
+	}
+};
+//
+SegmentedFSM.prototype.Execute = function () {
+	for (var key in this.segments) {
+		this.segments[key].Execute();
+	}
+}
+//
+SegmentedFSM.prototype.new_Segment = function (segment, data) {
+	this.segments[segment] = new SimpleFSM(this.agent, data);
+};
+SegmentedFSM.prototype.getSegments = function () {
+	return Object.keys(this.segments);
+};
+SegmentedFSM.prototype.setState = function (state, segment, args) {
+	if (segment&&this.segments[segment]) {
+		this.segments[segment].setState(state, args);
+	}else {
+		for (var key in this.segments) {
+			if (this.segments[key].states[state]){
+				this.segments[key].setState(state, args);
+			}
+		}
+	}
+}
