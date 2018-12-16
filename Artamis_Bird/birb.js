@@ -73,7 +73,7 @@ Birb.prototype.msg_in = function (msg, data) {
 function Animator (parent) {
 
 	this.parent = parent;
-	this.FSM = new SimpleFSM(this);
+	this.FSM = new SegmentedFSM(this);
 
 	this.attr_data = {
 		'eye_pos' : createVector(),
@@ -166,59 +166,68 @@ Animator.prototype.draw = function () {
 	// back
 
 }
-Animator.prototype._states = {
-	init:'idle',
-	idle:{
-		Execute:function(){
-					if(this.agent.attr_data.eye_target && this.agent.attr_data.eye_target.pos){
-				var target = this.agent.attr_data.eye_target.pos.copy();
-				var d = p5.Vector.sub(target, this.agent.attr_data.eye_pos);
-				d.limit(this.agent.attr_data.eye_spd*60);
-				this.agent.attr_data.eye_pos.add(d);
-			}
-
-			//sudo movements
-			// var eye_x = constrain(map(mouseX, 0, width, -1,1), -1, 1) * 10;
-			//this.agent.attr_data.eye_openess = constrain(map(mouseY, 0, height, 0,1), -1, 1);
-			if(this.agent.attr_data.eye_count<frameCount){
-				this.agent.attr_data.eye_count = frameCount + random(10,500);
-				if(this.agent.attr_data.eye_target_type){
-					this.agent.attr_data.eye_target = this.agent.parent.pointer;
-				}else{
-					this.agent.attr_data.eye_target = {'pos':createVector(random(width), random(height))};
+Animator.prototype._segments = {
+	eyes:{
+		init:'idle',
+		idle:{
+			Execute:function(){
+						if(this.agent.attr_data.eye_target && this.agent.attr_data.eye_target.pos){
+					var target = this.agent.attr_data.eye_target.pos.copy();
+					var d = p5.Vector.sub(target, this.agent.attr_data.eye_pos);
+					d.limit(this.agent.attr_data.eye_spd*60);
+					this.agent.attr_data.eye_pos.add(d);
 				}
-				this.agent.attr_data.eye_target_type = !this.agent.attr_data.eye_target_type;
+
+				//sudo movements
+				// var eye_x = constrain(map(mouseX, 0, width, -1,1), -1, 1) * 10;
+				//this.agent.attr_data.eye_openess = constrain(map(mouseY, 0, height, 0,1), -1, 1);
+				if(this.agent.attr_data.eye_count<frameCount){
+					this.agent.attr_data.eye_count = frameCount + random(10,500);
+					if(this.agent.attr_data.eye_target_type){
+						this.agent.attr_data.eye_target = this.agent.parent.pointer;
+					}else{
+						this.agent.attr_data.eye_target = {'pos':createVector(random(width), random(height))};
+					}
+					this.agent.attr_data.eye_target_type = !this.agent.attr_data.eye_target_type;
+				}
+				if(this.agent.attr_data.eye_blink_count<frameCount){
+					this.agent.attr_data.eye_blink_count = frameCount + random(10,50);
+					//do blink
+				}
+				this.agent.attr_data.eye_brow_rot = constrain(map(noise(frameCount*0.001+1000), 0, 1, -1,1), -0.5, 0.5);
+				this.agent.attr_data.eye_brow_h = constrain(map(noise(frameCount*0.001), 0,1, -1,1), -1, 1);
 			}
-			if(this.agent.attr_data.eye_blink_count<frameCount){
-				this.agent.attr_data.eye_blink_count = frameCount + random(10,50);
-				//do blink
-			}
-			this.agent.attr_data.eye_brow_rot = constrain(map(noise(frameCount*0.001+1000), 0, 1, -1,1), -0.5, 0.5);
-			this.agent.attr_data.eye_brow_h = constrain(map(noise(frameCount*0.001), 0,1, -1,1), -1, 1);
+		},
+		blink:{
+			Enter:function(){
+				this.data.state = 0;
+			},
+			Execute:function(){
+				this.FSM.states['idle'].Execute();
+				switch(this.data.state){
+					case 0:
+						this.agent.attr_data.eye_openess -= 0.25;
+						if(this.agent.attr_data.eye_openess <= 0) this.data.state++;
+						break;
+					case 1:
+						this.agent.attr_data.eye_openess += 0.1;
+						if(this.agent.attr_data.eye_openess >= 1) {
+							this.agent.attr_data.eye_openess = 1;
+							this.FSM.setState('idle');
+						}
+						break;
+				}
+
+			},
+			Exit:function(){}
 		}
 	},
-	blink:{
-		Enter:function(){
-			this.data.state = 0;
-		},
-		Execute:function(){
-			this.FSM.states['idle'].Execute();
-			switch(this.data.state){
-				case 0:
-					this.agent.attr_data.eye_openess -= 0.25;
-					if(this.agent.attr_data.eye_openess <= 0) this.data.state++;
-					break;
-				case 1:
-					this.agent.attr_data.eye_openess += 0.1;
-					if(this.agent.attr_data.eye_openess >= 1) {
-						this.agent.attr_data.eye_openess = 1;
-						this.FSM.setState('idle');
-					}
-					break;
-			}
-
-		},
-		Exit:function(){}
+	//
+	mouth:{
+		init:'idle',
+		idle:{
+			Execute:function(){}
+		}
 	}
 };
 
