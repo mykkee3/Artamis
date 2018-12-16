@@ -103,7 +103,7 @@ var Environment = function () {
 							}},
 							{build:'button',data:{
 								label:'Blink',
-								onClick:function(){this.GUI.parent.birb.anm.FSM.setState('blink')}
+								onClick:function(){this.GUI.parent.birb.anm.FSM.setState('blink', null, {speed:random(0.5,5)})}
 							}},
 							{build:'button',data:{
 								label:'Blush',

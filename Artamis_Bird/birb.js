@@ -199,18 +199,19 @@ Animator.prototype._segments = {
 			}
 		},
 		blink:{
-			Enter:function(){
+			Enter:function(args){
+				this.data.speed = args.speed || 1;
 				this.data.state = 0;
 			},
 			Execute:function(){
 				this.FSM.states['idle'].Execute();
 				switch(this.data.state){
 					case 0:
-						this.agent.attr_data.eye_openess -= 0.25;
+						this.agent.attr_data.eye_openess -= 0.25*this.data.speed;
 						if(this.agent.attr_data.eye_openess <= 0) this.data.state++;
 						break;
 					case 1:
-						this.agent.attr_data.eye_openess += 0.1;
+						this.agent.attr_data.eye_openess += 0.1*this.data.speed;
 						if(this.agent.attr_data.eye_openess >= 1) {
 							this.agent.attr_data.eye_openess = 1;
 							this.FSM.setState('idle');
