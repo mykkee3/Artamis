@@ -138,6 +138,7 @@ var Environment = function () {
 	//
 };
 Environment.prototype.init = function () {
+	//
 	this.log.log('Initializing Birb');
 	this.birb.init();
 	this.log.log('Done starting Artamis');
@@ -145,7 +146,7 @@ Environment.prototype.init = function () {
 };
 Environment.prototype.test = function (){
 	console.log('test')
-}
+};
 //-=-//
 Environment.prototype.update = function () {
 	this.viewports.update();
@@ -184,8 +185,6 @@ Environment.prototype.load_data = function (name) {
 Environment.prototype.save_data = function (s) {
 	
 }
-
-
 
 // -=-=-=-=- Environment Viewports -=-=-=-=- //
 //

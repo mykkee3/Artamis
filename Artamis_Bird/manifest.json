@@ -11,6 +11,7 @@
 		"./env.js",
 		"./chat.js",
 		"./birb.js",
+		"./mods/lewd_mode.js",
 		"./sketch.js"
 	]
 }

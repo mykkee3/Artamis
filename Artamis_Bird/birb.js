@@ -4,7 +4,6 @@ Birb = function () {
 
 	this.anm = new Animator(this);
 	this.AI = new AI(this);
-	this.FSM = new SimpleFSM(this);
 	//
 	this.pointer = {
 		update:function(){
@@ -15,6 +14,8 @@ Birb = function () {
 	};
 }
 Birb.prototype.init = function () {
+	this.anm.init();
+	this.FSM = new SimpleFSM(this);
 	//
 	this.viewport = enviroment.viewports.new('Birb',{
 		refresh:true,
@@ -73,7 +74,6 @@ Birb.prototype.msg_in = function (msg, data) {
 function Animator (parent) {
 
 	this.parent = parent;
-	this.FSM = new SegmentedFSM(this);
 
 	this.attr_data = {
 		'eye_pos' : createVector(),
@@ -89,6 +89,10 @@ function Animator (parent) {
 		'blush_alpha' : 0
 	};
 }
+Animator.prototype.init = function () {
+	this.FSM = new SegmentedFSM(this);
+}
+//
 Animator.prototype.update = function () {
 	this.FSM.Execute();
 }
