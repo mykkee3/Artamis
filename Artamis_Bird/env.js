@@ -80,6 +80,12 @@ var Environment = function () {
 								label:'Toggle Log',
 								onClick:function(){this.GUI.parent.log_viewport.toggle()}
 							}},
+							{build:'button',data:{
+								label:'Toggle Gender',
+								onClick:function(){
+									this.GUI.parent.birb.anm.data.default.gender = !this.GUI.parent.birb.anm.data.default.gender;
+								}
+							}},
 							//{build:'button',data:{}},
 							//{build:'button',data:{}},
 						]
@@ -103,7 +109,15 @@ var Environment = function () {
 							}},
 							{build:'button',data:{
 								label:'Blink',
-								onClick:function(){this.GUI.parent.birb.anm.FSM.setState('blink', null, {speed:random(0.5,5)})}
+								onClick:function(){this.GUI.parent.birb.anm.FSM.setState('blink')}
+							}},
+							{build:'button',data:{
+								label:'Eyes Open',
+								onClick:function(){this.GUI.parent.birb.anm.data.default.eye_openess = 1}
+							}},
+							{build:'button',data:{
+								label:'Eyes Closed',
+								onClick:function(){this.GUI.parent.birb.anm.data.default.eye_openess = 0}
 							}},
 							{build:'button',data:{
 								label:'Blush',
@@ -145,7 +159,8 @@ Environment.prototype.init = function () {
 	this.chat.init();
 };
 Environment.prototype.test = function (){
-	console.log('test')
+	console.log('test');
+	this.birb.anm.FSM.setState('wink')
 };
 //-=-//
 Environment.prototype.update = function () {

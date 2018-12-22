@@ -47,11 +47,11 @@
 #     [ ] features:
 #         [x] idle
 #         [ ] Eyes:
-#             [ ] independant eye animation *
+#             [x] independant eye animation *
 #             [ ] Eyeball Size *
 #             [x] Blink
 #             [ ] wink
-#             [ ] Toggle gender M/F *
+#             [x] Toggle gender M/F *
 #             [ ] Bottom Curve in *
 #             [ ] Bottom roundness
 #             [ ] Top Flat 
@@ -107,6 +107,7 @@
 #         [ ] Dissapointed
 #         [ ] Crying
 #     [ ] Lewd:
+#         [ ] Kissy face *
 #         [ ] Bedroom Eyes
 #         [ ] Longing Bedroom Eyes
 #         [ ] Eroused

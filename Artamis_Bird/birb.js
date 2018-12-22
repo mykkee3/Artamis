@@ -75,19 +75,25 @@ function Animator (parent) {
 
 	this.parent = parent;
 
-	this.attr_data = {
-		'eye_pos' : createVector(),
-		'eye_target' : null,
-		'eye_brow_rot' : 0,
-		'eye_brow_h' : 0,
-		'eye_openess' : 1,
-		'eye_spd' : 1,
-		'eye_count' : 0,
-		'eye_blink_count' : 0,
-		'eye_blink_state' : 0,
-		'eye_target_type' : 1,
-		'blush_alpha' : 0
-	};
+	this.data = {
+		default:{
+			'gender' : 0, // 0 : girl, 1: boy
+			'eye_pos' : createVector(),
+			'eye_target' : null,
+			'eye_brow_rot' : 0,
+			'eye_brow_h' : 0,
+			'eye_openess' : 1,
+			'eye_spd' : 1,
+			'eye_count' : 0,
+			'eye_blink_count' : 0,
+			'eye_blink_state' : 0,
+			'eye_target_type' : 1,
+			'blush_alpha' : 0
+		},
+		left_eye:{},
+		right_eye:{},
+		extras:{}
+	}
 }
 Animator.prototype.init = function () {
 	this.FSM = new SegmentedFSM(this);
@@ -97,18 +103,14 @@ Animator.prototype.update = function () {
 	this.FSM.Execute();
 }
 Animator.prototype.draw = function () {
-	var eye_openess = constrain(this.attr_data.eye_openess, 0,1);
-	var brow_rot = constrain(this.attr_data.eye_brow_rot, -0.5, 0.5)/(0.75+eye_openess);
-	var brow_h = max(map(eye_openess, 0,1, -1,1),
-			constrain(
-				(this.attr_data.eye_brow_h*0.75 + map(this.attr_data.eye_pos.y, 0,height, -1,1)),
-				-1, 1)) * 8;
-	var eye_x = constrain(map(this.attr_data.eye_pos.x, 0, width, -1,1), -1, 1) * 10;
-	var eye_y = constrain(map(this.attr_data.eye_pos.y, 0, height, -1,1), -1, 1) * 10;
+	var defaults = this.data.default;
+	var left_eye = Object.assign(Object.assign({}, defaults), this.data.left_eye);
+	var right_eye = Object.assign(Object.assign({}, defaults), this.data.right_eye);
+	var extras = Object.assign({}, this.data.extras);
+
+	var eye_x = constrain(map(defaults.eye_pos.x, 0, width, -1,1), -1, 1) * 10;
+	var eye_y = constrain(map(defaults.eye_pos.y, 0, height, -1,1), -1, 1) * 10;
 	var eye_pos = createVector(eye_x, eye_y);
-	eye_y = eye_pos.y*eye_openess;
-	var blush_alpha = constrain(this.attr_data.blush_alpha, 0,1) * 255;
-	var blushd_alpha = constrain(this.attr_data.blushd_alpha, 0,1) * 255;
 
 	var eye_col = {r:50, g:150, b:120}
 
@@ -127,31 +129,61 @@ Animator.prototype.draw = function () {
 
 	//Eyes
 	graphic.strokeJoin(ROUND);
-	graphic.strokeWeight(40*(eye_openess+0.5)/2);
+	graphic.strokeWeight(40*(defaults.eye_openess+0.5)/2);
 	graphic.stroke(eye_col.r, eye_col.g, eye_col.b);
 	graphic.fill(eye_col.r, eye_col.g, eye_col.b);
 
 	//Left Eye
-	offset_x = -100;
+	offset_x = -90;
 	offset_y = -50;
-	left_eye_openess = 1-eye_openess;
+	left_eye_openess = 1-left_eye.eye_openess;
+	left_eye_x = eye_pos.x;
+	left_eye_y = eye_pos.y*(1-left_eye_openess);
+	//
 	graphic.beginShape();
-	graphic.vertex(eye_x-40+offset_x-30*left_eye_openess, eye_y-40+offset_y+50*left_eye_openess);//TL
-	graphic.vertex(eye_x-40+offset_x-30*left_eye_openess, eye_y+40+offset_y-30*left_eye_openess);//BL
-	graphic.vertex(eye_x+40+offset_x+20*left_eye_openess, eye_y+40+offset_y-30*left_eye_openess);//BR
-	graphic.vertex(eye_x+40+offset_x+20*left_eye_openess, eye_y-40+offset_y+50*left_eye_openess);//TR
+	graphic.vertex(left_eye_x-40+offset_x-30*left_eye_openess, left_eye_y-40+offset_y+50*left_eye_openess);//TL
+	graphic.vertex(left_eye_x-40+offset_x-30*left_eye_openess, left_eye_y+40+offset_y-30*left_eye_openess);//BL
+	graphic.vertex(left_eye_x+40+offset_x+20*left_eye_openess, left_eye_y+40+offset_y-30*left_eye_openess);//BR
+	graphic.vertex(left_eye_x+40+offset_x+20*left_eye_openess, left_eye_y-40+offset_y+50*left_eye_openess);//TR
 	graphic.endShape(CLOSE);
+	//
+	if(!defaults.gender){
+		graphic.push();
+		graphic.strokeWeight(5);
+		graphic.noFill();
+		lash_x = left_eye_x-40+offset_x-30*left_eye_openess-10*(1-left_eye_openess);
+		lash_y = left_eye_y-40+offset_y+50*left_eye_openess-3-2*(1-left_eye_openess);
+		graphic.curve(lash_x+20, lash_y-40, lash_x, lash_y, lash_x-40, lash_y-10-5*left_eye_openess, lash_x-50, lash_y-80-5*left_eye_openess);
+		lash_y = left_eye_y-40+offset_y+50*left_eye_openess+15*(1-left_eye_openess);
+		graphic.curve(lash_x+20, lash_y-40, lash_x, lash_y, lash_x-40, lash_y-5+5*left_eye_openess, lash_x-50, lash_y-60+5*left_eye_openess);
+		graphic.pop();
+	}
 
 	//Right Eye
-	offset_x = 100;
+	offset_x = 90;
 	offset_y = -50;
-	right_eye_openess = 1-eye_openess;
+	right_eye_openess = 1-right_eye.eye_openess;
+	right_eye_x = eye_pos.x;
+	right_eye_y = eye_pos.y*(1-right_eye_openess);
+	//
 	graphic.beginShape();
-	graphic.vertex(eye_x-40+offset_x-20*right_eye_openess, eye_y-40+offset_y+50*right_eye_openess);//TL
-	graphic.vertex(eye_x-40+offset_x-20*right_eye_openess, eye_y+40+offset_y-30*right_eye_openess);//BL
-	graphic.vertex(eye_x+40+offset_x+30*right_eye_openess, eye_y+40+offset_y-30*right_eye_openess);//BR
-	graphic.vertex(eye_x+40+offset_x+30*right_eye_openess, eye_y-40+offset_y+50*right_eye_openess);//TR
+	graphic.vertex(right_eye_x-40+offset_x-20*right_eye_openess, right_eye_y-40+offset_y+50*right_eye_openess);//TL
+	graphic.vertex(right_eye_x-40+offset_x-20*right_eye_openess, right_eye_y+40+offset_y-30*right_eye_openess);//BL
+	graphic.vertex(right_eye_x+40+offset_x+30*right_eye_openess, right_eye_y+40+offset_y-30*right_eye_openess);//BR
+	graphic.vertex(right_eye_x+40+offset_x+30*right_eye_openess, right_eye_y-40+offset_y+50*right_eye_openess);//TR
 	graphic.endShape(CLOSE);
+	//
+	if(!defaults.gender){
+		graphic.push();
+		graphic.strokeWeight(5);
+		graphic.noFill();
+		lash_x = right_eye_x+40+offset_x+30*right_eye_openess+10*(1-right_eye_openess);
+		lash_y = right_eye_y-40+offset_y+50*right_eye_openess-3-2*(1-right_eye_openess);
+		graphic.curve(lash_x-20, lash_y-40, lash_x, lash_y, lash_x+40, lash_y-10-5*right_eye_openess, lash_x+50, lash_y-80-5*right_eye_openess);
+		lash_y = right_eye_y-40+offset_y+50*right_eye_openess+15*(1-right_eye_openess);
+		graphic.curve(lash_x-20, lash_y-40, lash_x, lash_y, lash_x+40, lash_y-5+5*right_eye_openess, lash_x+50, lash_y-60+5*right_eye_openess);
+		graphic.pop();
+	}
 
 	//Beak
 	graphic.strokeWeight(5);
@@ -175,49 +207,50 @@ Animator.prototype._segments = {
 		init:'idle',
 		idle:{
 			Execute:function(){
-						if(this.agent.attr_data.eye_target && this.agent.attr_data.eye_target.pos){
-					var target = this.agent.attr_data.eye_target.pos.copy();
-					var d = p5.Vector.sub(target, this.agent.attr_data.eye_pos);
-					d.limit(this.agent.attr_data.eye_spd*60);
-					this.agent.attr_data.eye_pos.add(d);
+				if(this.agent.data.default.eye_target && this.agent.data.default.eye_target.pos){
+					var target = this.agent.data.default.eye_target.pos.copy();
+					var d = p5.Vector.sub(target, this.agent.data.default.eye_pos);
+					d.limit(this.agent.data.default.eye_spd*60);
+					this.agent.data.default.eye_pos.add(d);
 				}
 
 				//sudo movements
 				// var eye_x = constrain(map(mouseX, 0, width, -1,1), -1, 1) * 10;
-				//this.agent.attr_data.eye_openess = constrain(map(mouseY, 0, height, 0,1), -1, 1);
-				if(this.agent.attr_data.eye_count<frameCount){
-					this.agent.attr_data.eye_count = frameCount + random(10,500);
-					if(this.agent.attr_data.eye_target_type){
-						this.agent.attr_data.eye_target = this.agent.parent.pointer;
+				//this.agent.data.default.eye_openess = constrain(map(mouseY, 0, height, 0,1), -1, 1);
+				if(this.agent.data.default.eye_count<frameCount){
+					this.agent.data.default.eye_count = frameCount + random(10,500);
+					if(this.agent.data.default.eye_target_type){
+						this.agent.data.default.eye_target = this.agent.parent.pointer;
 					}else{
-						this.agent.attr_data.eye_target = {'pos':createVector(random(width), random(height))};
+						this.agent.data.default.eye_target = {'pos':createVector(random(width), random(height))};
 					}
-					this.agent.attr_data.eye_target_type = !this.agent.attr_data.eye_target_type;
+					this.agent.data.default.eye_target_type = !this.agent.data.default.eye_target_type;
 				}
-				if(this.agent.attr_data.eye_blink_count<frameCount){
-					this.agent.attr_data.eye_blink_count = frameCount + random(10,50);
+				if(this.agent.data.default.eye_blink_count<frameCount){
+					this.agent.data.default.eye_blink_count = frameCount + random(10,1000);
 					//do blink
+					this.FSM.setState('blink');
 				}
-				this.agent.attr_data.eye_brow_rot = constrain(map(noise(frameCount*0.001+1000), 0, 1, -1,1), -0.5, 0.5);
-				this.agent.attr_data.eye_brow_h = constrain(map(noise(frameCount*0.001), 0,1, -1,1), -1, 1);
+				this.agent.data.default.eye_brow_rot = constrain(map(noise(frameCount*0.001+1000), 0, 1, -1,1), -0.5, 0.5);
+				this.agent.data.default.eye_brow_h = constrain(map(noise(frameCount*0.001), 0,1, -1,1), -1, 1);
 			}
 		},
 		blink:{
 			Enter:function(args){
-				this.data.speed = args.speed || 1;
+				this.data.speed = (args||{}).speed || random(0.8,3);
 				this.data.state = 0;
 			},
 			Execute:function(){
 				this.FSM.states['idle'].Execute();
 				switch(this.data.state){
 					case 0:
-						this.agent.attr_data.eye_openess -= 0.25*this.data.speed;
-						if(this.agent.attr_data.eye_openess <= 0) this.data.state++;
+						this.agent.data.default.eye_openess -= 0.25*this.data.speed;
+						if(this.agent.data.default.eye_openess <= 0) this.data.state++;
 						break;
 					case 1:
-						this.agent.attr_data.eye_openess += 0.1*this.data.speed;
-						if(this.agent.attr_data.eye_openess >= 1) {
-							this.agent.attr_data.eye_openess = 1;
+						this.agent.data.default.eye_openess += 0.1*this.data.speed;
+						if(this.agent.data.default.eye_openess >= 1) {
+							this.agent.data.default.eye_openess = 1;
 							this.FSM.setState('idle');
 						}
 						break;
