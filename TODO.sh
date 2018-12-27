@@ -43,19 +43,20 @@
 #     [ ] Python to Nano I2c (duplex)
 #     [ ] I2c to Nano I/O 
 # 
+# [ ] fix - animator to standalone class
 # [ ] add - face animations:
 #     [ ] features:
 #         [x] idle
 #         [ ] Eyes:
 #             [x] independant eye animation *
-#             [ ] Eyeball Size *
+#             [X] Eyeball Size *
 #             [x] Blink
 #             [ ] wink
 #             [x] Toggle gender M/F *
 #             [ ] Bottom Curve in *
 #             [ ] Bottom roundness
 #             [ ] Top Flat 
-#             [ ] Top Brow Line *
+#             [x] Top Brow Line *
 #             [ ] Bottom Brow Line
 #             [ ] Bags under eyes
 #         [ ] Mouth:
@@ -66,13 +67,24 @@
 #             [ ] Blush Whole Face
 #             [ ] Blush Discust
 #         [ ] Extras:
+#             [ ] Costumes:
+#                 [x] Xmass
+#                 [ ] NewYears
+#                 [ ] Halloween
+#                 [ ] ThanksGiving 
+#                 [ ] Valintines 
 #             [ ] vain Pop (angry) *
 #             [ ] Sleepy Zs
 #             [ ] Sleepy Snot bubble
 #             [ ] Bowtie (for hair)
+#     [ ] Yes
+#     [ ] No
 #     [ ] Supprised *
 #     [ ] Embarrased
 #     [ ] Laugh
+#     [ ] Laugh hard
+#     [ ] coughing
+#     [ ] coughing hard
 #     [ ] Intrigued
 #     [ ] Confuzed
 #     [ ] Nervous
@@ -133,6 +145,27 @@
 #
 # [ ] add - Viewport management PiP screen management *
 # [ ] and - viewport animations: *
+#     [ ] partying minigame:
+#         [ ] weed smoking:
+#             [ ] smoke spliff
+#             [ ] toke pipe
+#             [ ] toke bong
+#             [ ] smoke :
+#                 [ ] exhale mouth
+#                 [ ] exhale nose
+#                 [ ] coughing
+#             [ ] high :
+#                 [ ] light buzz
+#                 [ ] little high
+#                 [ ] high
+#                 [ ] stoned
+#         [ ] drinking:
+#             [ ] drink bottle
+#             [ ] drunk:
+#                 [ ] light buzz
+#                 [ ] little drunk
+#                 [ ] drunk
+#                 [ ] smashed
 #     [ ] sex minigame:
 #         [ ] show butt
 #         [ ] show pleasureing device:

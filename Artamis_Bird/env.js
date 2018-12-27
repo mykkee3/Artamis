@@ -104,20 +104,63 @@ var Environment = function () {
 					{build:'submenu', data:{
 						name:'Face Control',
 						_build:[
+							{build:'submenu', data:{
+								name: 'Eye Target',
+								_build:[
+									{build:'special_button',data:{
+										label:'Idle',
+										onClick:function(){
+											this.GUI.parent.birb.anm.data.default.eye_count = 0;
+										}
+									}},
+									{build:'button',data:{
+										label:'Pointer',
+										onClick:function(){
+											this.GUI.parent.birb.anm.data.default.eye_count = Infinity;
+											this.GUI.parent.birb.anm.data.default.eye_target = this.GUI.parent.birb.pointer;
+										}
+									}},
+								]
+							}},
 							{build:'special_button',data:{
 								label:'Idle',
 							}},
 							{build:'button',data:{
 								label:'Blink',
-								onClick:function(){this.GUI.parent.birb.anm.FSM.setState('blink')}
+								onClick:function(){
+									this.GUI.parent.birb.anm.data.default.eye_blink_count = 0;
+								}
 							}},
 							{build:'button',data:{
-								label:'Eyes Open',
-								onClick:function(){this.GUI.parent.birb.anm.data.default.eye_openess = 1}
+								label:'Toggle Eyes Open',
+								onClick:function(){
+									if(this.GUI.parent.birb.anm.data.default.eye_openess){
+										this.GUI.parent.birb.anm.data.default.eye_openess = 0;
+										this.GUI.parent.birb.anm.data.default.eye_blink_count = Infinity;
+									}else{
+										this.GUI.parent.birb.anm.data.default.eye_openess = 1;
+										this.GUI.parent.birb.anm.data.default.eye_blink_count = 0;
+									}
+								}
 							}},
 							{build:'button',data:{
-								label:'Eyes Closed',
-								onClick:function(){this.GUI.parent.birb.anm.data.default.eye_openess = 0}
+								label:'Toggle Eyes Size',
+								onClick:function(){
+									switch(this.GUI.parent.birb.anm.data.default.eye_size){
+										case 0:
+											this.GUI.parent.birb.anm.data.default.eye_size = 0.5;
+											break;
+										case 0.5:
+											this.GUI.parent.birb.anm.data.default.eye_size = 1;
+											break;
+										case 1:
+											this.GUI.parent.birb.anm.data.default.eye_size = 0;
+											break;
+										default:
+											this.GUI.parent.birb.anm.data.default.eye_size = 1;
+											break;
+									}
+								}
 							}},
 							{build:'button',data:{
 								label:'Blush',
@@ -141,6 +184,23 @@ var Environment = function () {
 							}},
 						]
 					}},
+					{build:'submenu', data:{
+						name:'Extras',
+						_build:[
+							{build:'special_button',data:{
+								label:'None',
+								onClick:function(){this.GUI.parent.birb.anm.FSM.setState('none', 'extras')}
+							}},
+							{build:'button',data:{
+								label:'Xmass',
+								onClick:function(){this.GUI.parent.birb.anm.FSM.setState('xmass', 'extras')}
+							}},
+							{build:'button',data:{
+								label:'New Years',
+								onClick:function(){this.GUI.parent.birb.anm.FSM.setState('newYear', 'extras')}
+							}},
+						]
+					}},
 					{build:'special_button',data:{
 						label:'Run Test',
 						onClick:function(){this.GUI.parent.test()}
@@ -160,7 +220,7 @@ Environment.prototype.init = function () {
 };
 Environment.prototype.test = function (){
 	console.log('test');
-	this.birb.anm.FSM.setState('wink')
+	this.birb.anm.FSM.setState('blink', null, {speed:0.1})
 };
 //-=-//
 Environment.prototype.update = function () {
