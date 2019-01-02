@@ -19,6 +19,10 @@
 #
 # TODO:
 #
+# [ ] get speaker
+# [ ] 2* RasPi
+# [ ] the fucking chip for the eye
+#
 # [ ] add - button click animation
 #
 # [ ] add - Mods:
@@ -43,7 +47,10 @@
 #     [ ] Python to Nano I2c (duplex)
 #     [ ] I2c to Nano I/O 
 # 
-# [ ] fix - animator to standalone class
+# [ ] fix - animator to standalone class **
+# [ ] add - Nose to beak:
+#     [ ] nose
+#     [ ] ajdustable size
 # [ ] add - face animations:
 #     [ ] features:
 #         [x] idle
@@ -69,10 +76,18 @@
 #         [ ] Extras:
 #             [ ] Costumes:
 #                 [x] Xmass
-#                 [ ] NewYears
+#                 [x] NewYears:
+#                     [x] 2019
+#                     [ ] automatic
+#                     [ ] switching animation
+#                     [ ] 2020
+#                 [ ] Valintines: *
+#                     [ ] some cute faces *
+#                     [ ] heart eyes *
+#                     [ ] ahegao face
+#                     [ ] at least one lewd feature
 #                 [ ] Halloween
 #                 [ ] ThanksGiving 
-#                 [ ] Valintines 
 #             [ ] vain Pop (angry) *
 #             [ ] Sleepy Zs
 #             [ ] Sleepy Snot bubble
@@ -145,6 +160,9 @@
 #
 # [ ] add - Viewport management PiP screen management *
 # [ ] and - viewport animations: *
+#     [ ] dancing:
+#         [ ] dancing no fucking clue but cute
+#         [ ] play music?
 #     [ ] partying minigame:
 #         [ ] weed smoking:
 #             [ ] smoke spliff
