@@ -33,12 +33,6 @@ until finished
 
 End with an example of getting some data out of the system or using it for a little demo
 
-## TODO:
-
-- [ ] upd - make public list
-- [ ] rmv - private list
-- [ ] add - TODO list
-
 ## Running the tests
 
 Explain how to run the automated tests for this system
@@ -58,6 +52,12 @@ Explain what these tests test and why
 ```
 Give an example
 ```
+
+## Development TODO:
+
+- [ ] upd - make public list
+- [ ] rmv - private list
+- [ ] add - TODO list
 
 ## Deployment
 

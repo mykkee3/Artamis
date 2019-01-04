@@ -58,7 +58,7 @@ Birb.prototype.input_change = function (obj) {
 }
 Birb.prototype.post = function (data) {
 	$.post("birb.py",Object.assign({
-		'type': 'start',
+		'type': 'msg',
 		'msg': ''
 	},data||{}), 
 	function(data,status){

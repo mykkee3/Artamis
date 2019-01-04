@@ -16,6 +16,10 @@ import argparse
 
 from imp import load_source
 
+load_source('Birb', './Birb/birb.py');
+from Birb import Birb_
+Birb = Birb_();
+
 #-# Globals and Constants #-#
 
 PARSER = argparse.ArgumentParser()
@@ -50,7 +54,10 @@ class HandlerClass(Handler):
 		resp = 'empty respopnse'
 		try:
 			handle = load_source('handle', '.'+self.path)
-			resp = handle.handle(post_body, self.path)
+			resp = handle.handle({
+				'Handler':self,
+				'Birb':Birb
+			}, post_body, self.path)
 		except Exception, e:
 			print 'Handle error:', e
 

@@ -227,7 +227,7 @@ Environment.prototype.init = function () {
 };
 Environment.prototype.test = function (){
 	console.log('test');
-	this.birb.anm.FSM.setState('blink', null, {speed:0.1})
+	this.birb.post({msg:'test'});
 };
 //-=-//
 Environment.prototype.update = function () {
