@@ -64,7 +64,7 @@ class HandlerClass(Handler):
 		self._set_headers()
 		self.wfile.write(resp)
 
-server = SocketServer.TCPServer(('0.0.0.0', 8080), HandlerClass)
+server = SocketServer.TCPServer(('192.168.1.18', 8080), HandlerClass)
 
 
 #-# Functions and Classes #-#

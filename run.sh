@@ -14,7 +14,7 @@ echo
 # Globals and constants
 verbose=false;
 do_python=true;
-do_chrome=true;
+do_chrome=false;
 
 # load manifest info
 version="0.1.0 pre-alpha";
@@ -47,6 +47,8 @@ echo "Server state up \tAddress: $line\n"
 
 if ! $do_chrome; then
 	echo "Stopping early, '--testing' is set true.\n"
+	echo "Press any key to stop server"
+	read killing
 	if $do_python; then echo "kill" >server_inpipe; fi
 	exit 0;
 fi
