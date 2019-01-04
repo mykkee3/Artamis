@@ -10,10 +10,64 @@
 
 	<script type="text/javascript">
 		//-=-=-=-=-=-=- Functions -=-=-=-=-=-=-//
+		var add_alert = function (msg) {
+			add_msg(msg, 'alert');
+		}
+		var add_msg = function (msg, typ, usr) {
+			usr = usr || 'console';
+			typ = typ || 'msg';
+			var msgs = document.getElementById('messages');
+			var p = document.createElement('p');
+			p.className = typ;
+			p.innerHTML = msg;
+			p.setAttribute('user', usr);
+			msgs.appendChild(p);
+		}
+		var submit_form = function () {
+			var msg = document.forms['input']['textbox'].value;
+			try{
+				chat.submit();
+			}catch (err){
+				add_msg(msg);
+				$.post("../Birb/hook.py",{
+					'type': 'msg',
+					'msg': msg
+				}, 
+				function(data,status){
+					if(status == 'success'){
+						add_alert(data);
+					}
+				}).fail(function(){
+					console.log('post fail');
+				});
+				document.forms['input']['textbox'].value = '';
+			}
+			return false;
+		};
+
 		var dn = function() {
-			console.log('done loading!');
-			chat = new Chat();
-			chat.init();
+			add_alert('done loading!');
+			try{
+				chat = new Chat();
+				chat.init();
+			}catch(err){
+				var keepAlive = function(){
+					$.post("../Birb/hook.py",{
+						'type': 'read',
+						'msg': ''
+					}, 
+					function(data,status){
+						if(data){
+							data = JSON.parse(data);
+							if(data.msg) add_msg(data.msg, 'msg', 'Artamis');
+						}
+					}).fail(function(){
+						add_alert('post fail');
+					});
+					setTimeout(function(){keepAlive()}, 5000);
+				};
+				keepAlive();
+			}
 			return;
 		};
 		// callbacks
@@ -26,11 +80,11 @@
 						dn();
 						return;
 					};
-					console.log("loading: "+url);
+					add_alert("loading: "+url);
 					$.getScript(url)
 					.done(cb)
 					.fail(function () {
-						console.log('failed to load script');
+						add_alert('failed to load script');
 					});
 				}
 				function cb () {
@@ -56,7 +110,7 @@
 			</div>
 		</div>
 		<div id='input_cont'>
-			<form id='input' name='input' onsubmit='chat.submit(); return false;' action='#' autocomplete="off">
+			<form id='input' name='input' onsubmit='submit_form(); return false' action='#' autocomplete="off">
 				<input type='text' name='textbox' value=''>
 				<button type='submit'>Talk</button>
 			</form>

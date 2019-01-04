@@ -56,7 +56,7 @@ function Chat() {
 				}
 			} 
 		}})
-		setTimeout(function(){self.keepAlive()}, 2000);
+		setTimeout(function(){self.keepAlive()}, 5000);
 	};
 
 	this.recieve_handlr = function () {
