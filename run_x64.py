@@ -14,6 +14,10 @@ import logging
 
 from imp import load_source
 
+load_source('Birb', './Birb/birb.py');
+from Birb import Birb_
+Birb = Birb_();
+
 #-# Globals and Constants #-#
 logging.basicConfig(stream=sys_stdout, filename='bin/log.log', filemode='w', level=logging.DEBUG)
 LOG = logging.getLogger('root')
@@ -21,6 +25,7 @@ Handler = SimpleHTTPServer.SimpleHTTPRequestHandler
 
 class HandlerClass(Handler):
 	"""docstring for Handler"""
+
 	def _set_headers(self):
 		self.send_response(200)
 		self.send_header('Content-type', 'text/html')
@@ -33,10 +38,13 @@ class HandlerClass(Handler):
 		content_len = int(self.headers.getheader('content-length', 0))
 		post_body = self.rfile.read(content_len)
 
-		resp = 'empty respopnse'
+		resp = 'empty response'
 		try:
-			handle = load_source('handle', '.'+self.path)
-			resp = handle.handle(post_body, self.path)
+			handle = load_source(self.path, '.'+self.path)
+			resp = handle.handle({
+				'Handler':self,
+				'Birb':Birb
+			}, post_body, self.path)
 		except Exception, e:
 			print 'Handle error:', e
 

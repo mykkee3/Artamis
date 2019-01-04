@@ -47,11 +47,14 @@ var Environment = function () {
 	//
 	this.log = Logger.get_log('info', {verbose:true});
 	//
+	this.bg_color = {r:40,g:40,b:40};
+	//
 	this.viewports = new _Viewports(this);
 	this.GUI = new _GUI(this);
 	this.log_viewport = this.viewports.new('Log',{
 		refresh:true,
 		active:false,
+		priority:1,
 		debug:true,
 		dim:{x:width/2, y:height/2},
 		pos:{x:0, y:height/2},
@@ -80,6 +83,12 @@ var Environment = function () {
 								label:'Toggle Log',
 								onClick:function(){this.GUI.parent.log_viewport.toggle()}
 							}},
+							{build:'button',data:{
+								label:'Toggle Gender',
+								onClick:function(){
+									this.GUI.parent.birb.anm.data.default.gender = !this.GUI.parent.birb.anm.data.default.gender;
+								}
+							}},
 							//{build:'button',data:{}},
 							//{build:'button',data:{}},
 						]
@@ -98,12 +107,63 @@ var Environment = function () {
 					{build:'submenu', data:{
 						name:'Face Control',
 						_build:[
+							{build:'submenu', data:{
+								name: 'Eye Target',
+								_build:[
+									{build:'special_button',data:{
+										label:'Idle',
+										onClick:function(){
+											this.GUI.parent.birb.anm.data.default.eye_count = 0;
+										}
+									}},
+									{build:'button',data:{
+										label:'Pointer',
+										onClick:function(){
+											this.GUI.parent.birb.anm.data.default.eye_count = Infinity;
+											this.GUI.parent.birb.anm.data.default.eye_target = this.GUI.parent.birb.pointer;
+										}
+									}},
+								]
+							}},
 							{build:'special_button',data:{
 								label:'Idle',
 							}},
 							{build:'button',data:{
 								label:'Blink',
-								onClick:function(){this.GUI.parent.birb.anm.FSM.setState('blink', null, {speed:random(0.5,5)})}
+								onClick:function(){
+									this.GUI.parent.birb.anm.data.default.eye_blink_count = 0;
+								}
+							}},
+							{build:'button',data:{
+								label:'Toggle Eyes Open',
+								onClick:function(){
+									if(this.GUI.parent.birb.anm.data.default.eye_openess){
+										this.GUI.parent.birb.anm.data.default.eye_openess = 0;
+										this.GUI.parent.birb.anm.data.default.eye_blink_count = Infinity;
+									}else{
+										this.GUI.parent.birb.anm.data.default.eye_openess = 1;
+										this.GUI.parent.birb.anm.data.default.eye_blink_count = 0;
+									}
+								}
+							}},
+							{build:'button',data:{
+								label:'Toggle Eyes Size',
+								onClick:function(){
+									switch(this.GUI.parent.birb.anm.data.default.eye_size){
+										case 0:
+											this.GUI.parent.birb.anm.data.default.eye_size = 0.5;
+											break;
+										case 0.5:
+											this.GUI.parent.birb.anm.data.default.eye_size = 1;
+											break;
+										case 1:
+											this.GUI.parent.birb.anm.data.default.eye_size = 0;
+											break;
+										default:
+											this.GUI.parent.birb.anm.data.default.eye_size = 1;
+											break;
+									}
+								}
 							}},
 							{build:'button',data:{
 								label:'Blush',
@@ -127,6 +187,27 @@ var Environment = function () {
 							}},
 						]
 					}},
+					{build:'submenu', data:{
+						name:'Extras',
+						_build:[
+							{build:'special_button',data:{
+								label:'None',
+								onClick:function(){this.GUI.parent.birb.anm.FSM.setState('none', 'extras')}
+							}},
+							{build:'button',data:{
+								label:'Xmass',
+								onClick:function(){this.GUI.parent.birb.anm.FSM.setState('xmass', 'extras')}
+							}},
+							{build:'button',data:{
+								label:'New Years',
+								onClick:function(){this.GUI.parent.birb.anm.FSM.setState('newYear', 'extras')}
+							}},
+							{build:'button',data:{
+								label:'Festive (temp)',
+								onClick:function(){this.GUI.parent.birb.anm.FSM.setState('festive', 'extras')}
+							}}
+						]
+					}},
 					{build:'special_button',data:{
 						label:'Run Test',
 						onClick:function(){this.GUI.parent.test()}
@@ -138,14 +219,16 @@ var Environment = function () {
 	//
 };
 Environment.prototype.init = function () {
+	//
 	this.log.log('Initializing Birb');
 	this.birb.init();
 	this.log.log('Done starting Artamis');
 	this.chat.init();
 };
 Environment.prototype.test = function (){
-	console.log('test')
-}
+	console.log('test');
+	this.birb.post({msg:'test'});
+};
 //-=-//
 Environment.prototype.update = function () {
 	this.viewports.update();
@@ -155,7 +238,7 @@ Environment.prototype.update = function () {
 	
 };
 Environment.prototype.draw = function () {
-	background(40);
+	background(this.bg_color.r, this.bg_color.g, this.bg_color.b);
 	this.viewports.draw();
 	this.GUI.draw();
 	//
@@ -184,8 +267,6 @@ Environment.prototype.load_data = function (name) {
 Environment.prototype.save_data = function (s) {
 	
 }
-
-
 
 // -=-=-=-=- Environment Viewports -=-=-=-=- //
 //
@@ -663,6 +744,7 @@ var SimpleFSM = function (agent, states) {
 		for (var key in states) {
 			val = states[key];
 			if(key=='init'){this.setState(val);}
+			else if(key=='type'){}
 			else {this.new_State(key,val);}
 		}
 	}
@@ -710,17 +792,71 @@ SimpleFSM.prototype.new_State = function (state, data) {
 };
 
 
+
 // -=-=-=-=- Segmented Finite State Machine -=-=-=-=- //
-var SegmentedFSM = function (agent) {
-	//SimpleFSM.call(this, agent);
+var StackedFSM = function(agent, states){
+	this.agent = agent;
+	this.states = {};
+	this.current_states = [];
+	this.current_transitions = [];
+	//
+	if(agent&&(agent._states||states)){
+		var val;
+		var states = agent._states || states;
+		for (var key in states) {
+			val = states[key];
+			if(key=='init'){this.setState(val);}
+			else if(key=='type'){}
+			else {this.new_State(key,val);}
+		}
+	}
+};
+StackedFSM.prototype.new_State = SimpleFSM.prototype.new_State;
+//
+StackedFSM.prototype.Execute = function () {
+	var state;
+	var args;
+	for (var i = this.current_states.length - 1; i >= 0; i--) {
+		state = this.states[this.current_states[i]];
+		state.Execute();
+		if(state.complete){
+			state.complete = false;
+			state.Exit();
+			this.removeState(this.current_states[i]);
+		}
+	}
+	for (var i = this.current_transitions.length - 1; i >= 0; i--) {
+		state = this.current_transitions[i][0];
+		args = this.current_transitions[i][1];
+		//
+		if((this.current_states.indexOf(state)==-1)&&(this.states[state])){
+			this.current_states.push(state);
+			this.states[state].Enter(args);
+			this.states[state].Execute(args);
+		}
+	}
+	if(this.current_transitions.length > 0)this.current_transitions = [];
+};
+StackedFSM.prototype.setState = function (state, args) {
+	this.current_transitions.push([state, args]);
+};
+StackedFSM.prototype.removeState = function (state) {
+	this.current_states.splice(this.current_states.indexOf(state), 1);
+};
+
+
+
+// -=-=-=-=- Segmented Finite State Machine -=-=-=-=- //
+var SegmentedFSM = function (agent, segments) {
 	this.agent = agent;
 	this.segments = {};
 	this.initial_state = null;
 
-	if(agent&&agent._segments){
+	if(agent&&(agent._segments||segments)){
 		var val;
-		for (var key in agent._segments) {
-			val = agent._segments[key];
+		var segments = agent._segments || segments;
+		for (var key in segments) {
+			val = segments[key];
 			this.new_Segment(key,val);
 		}
 	}
@@ -733,7 +869,18 @@ SegmentedFSM.prototype.Execute = function () {
 }
 //
 SegmentedFSM.prototype.new_Segment = function (segment, data) {
-	this.segments[segment] = new SimpleFSM(this.agent, data);
+	switch(data.type){
+		default:
+		case 'SimpleFSM':
+			this.segments[segment] = new SimpleFSM(this.agent, data);
+			break;
+		case 'StackedFSM':
+			this.segments[segment] = new StackedFSM(this.agent, data);
+			break;
+		case 'SegmentedFSM':
+			this.segments[segment] = new SegmentedFSM(this.agent, data);
+			break;
+	}
 };
 SegmentedFSM.prototype.getSegments = function () {
 	return Object.keys(this.segments);
@@ -748,4 +895,5 @@ SegmentedFSM.prototype.setState = function (state, segment, args) {
 			}
 		}
 	}
-}
+};
+

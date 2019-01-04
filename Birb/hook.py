@@ -5,8 +5,13 @@ import json
 from os.path import dirname as path_dirname
 from os.path import join as path_join
 from os.path import abspath as path_abspath
+from imp import load_source
 
-def handle(datastr, path):
+load_source('Nets','./Birb/Nets/__init__.py')
+from Nets import newNetwork
+
+def handle(Network, datastr, path):
+	Birb = Network['Birb'];
 	# parse data
 	dir_ = path_dirname(path)
 	data = urlparse.parse_qs(datastr, True)
@@ -17,10 +22,11 @@ def handle(datastr, path):
 	if (type_ == 'msg'):
 		Birb.msg_in(msg, data)
 		return 'msg recieved! ^v^'
+	elif (type_ == 'read'):
+		return Birb.read();
 	elif (type_ == 'start'):
 		print 'starting'
-		global Birb
-		Birb = Birb_()
+		Birb.init();
 		return 'started birb!'
 	elif(type_ == 'stop'):
 		print 'stopping'
@@ -28,15 +34,3 @@ def handle(datastr, path):
 	else:
 		return 'msg dunno! TvT'
 
-
-class Birb_():
-	# birb
-	def __init__(self):
-		pass
-
-	def msg_in(self, msg, data):
-		print 'birb heard: ', msg
-		self.msg_out(msg)
-
-	def msg_out(self, msg):
-		pass

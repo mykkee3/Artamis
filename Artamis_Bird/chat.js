@@ -87,4 +87,4 @@ function Chat(parent) {
 		}
 	
 	};
-}
+};

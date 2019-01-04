@@ -16,7 +16,6 @@ const chatManager = new Chatkit.ChatManager({
 //-=-=-=-=- Chat stuff -=-=-=-=- //
 //
 //
-
 function Chat() {
 
 	this.init = function () {
@@ -41,6 +40,23 @@ function Chat() {
 			.catch(error => {
 				console.error("error:", error);
 			});
+			this.start_birb();
+	};
+
+	this.keepAlive = function(){
+		var self = this
+		this.post({type:'read', cb:function(data, status){
+			if(data){
+				data = JSON.parse(data);
+				if(data.msg != null){
+					self.recieve({
+						text:data.msg,
+						senderId:'Artamis'
+					})
+				}
+			} 
+		}})
+		setTimeout(function(){self.keepAlive()}, 2000);
 	};
 
 	this.recieve_handlr = function () {
@@ -66,10 +82,28 @@ function Chat() {
 				text: msg,
 				roomId: currentUser.rooms[0].id
 			});
+			this.post({msg:msg});
 			console.log('Sent:',msg);
 		}
 	};
 
+	this.post = function (data){
+		var cb = data.cb || function(data, status){console.log("Data: " + data + "\nStatus: " + status);};
+		$.post("../Birb/hook.py",Object.assign({
+			'type': 'msg',
+			'msg': ''
+		},data||{}), 
+		function(data,status){
+			cb(data, status);
+		}).fail(function(){
+			console.log('post fail');
+		});
+	};
+
+	this.start_birb = function () {
+		this.post({type:'start'})
+		this.keepAlive();
+	}
 	// messages //
 
 	this.alert = function (msg) {
