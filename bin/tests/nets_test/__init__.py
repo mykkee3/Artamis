@@ -22,6 +22,7 @@ class newNetwork():
 		self.bot = RiveScript();
 		self.bot.load_directory(self.dir);
 		self.bot.sort_replies();
+		self.bot.set_uservar("localuser", 'topic', 'random');
 		#
 		self.msgs = []; # current memory segment
 		self.msgsContext = [] #previous message segment after saving

@@ -1,7 +1,5 @@
 ! version = 2.0
 
-! sub wanna = want to
-
 + hello
 - Hello.
 
