@@ -52,7 +52,7 @@ class HandlerClass(Handler):
 		self.wfile.write(resp)
 
 
-server = SocketServer.TCPServer(('192.168.1.2', 80), HandlerClass)
+server = SocketServer.TCPServer(('192.168.1.10', 80), HandlerClass)
 
 #-# Functions and Classes #-#
 

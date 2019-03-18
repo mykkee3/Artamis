@@ -47,7 +47,7 @@ var Environment = function () {
 	//
 	this.log = Logger.get_log('info', {verbose:true});
 	//
-	this.bg_color = {r:40,g:40,b:40};
+	this.bg_color = {r:20,g:20,b:20};
 	//
 	this.viewports = new _Viewports(this);
 	this.GUI = new _GUI(this);
@@ -369,6 +369,9 @@ var _GUI = function (parent) {
 		refresh:true,
 		priority:2,
 	});
+	this._debug = true;
+	this._fps_hystory = [];
+	this._fps = 0;
 	//
 	this.log = Logger.get_log('info');
 };
@@ -387,6 +390,50 @@ _GUI.prototype.draw = function(){
 		this._objects[this._active[i]].draw();
 	}
 	if (this._popcorn) this._popcorn.draw();
+	if (this._debug) this.drawDebug();
+
+};
+_GUI.prototype.drawDebug = function(){
+	//
+	var hystMax = 100;
+	this._fps_hystory.push(frameRate());
+	this._fps = this._fps_hystory.reduce(function(a,b){return a+b;},0)/this._fps_hystory.length;
+	if (this._fps_hystory.length>hystMax) {
+		this._fps_hystory = this._fps_hystory.slice(1);
+	}
+	//
+	var graphic = this._viewport.graphic;
+	var dim = createVector(300,50);
+	var pos = createVector(graphic.width-dim.x, 0);
+	//
+	graphic.push();
+	graphic.stroke(0);
+	graphic.fill(200,200,200,50);
+	graphic.rect(pos.x, pos.y, dim.x, dim.y);
+	//
+	// FPS 
+	graphic.noStroke(0);
+	graphic.fill(0,0,0,255);
+	graphic.text("FPS:"+Math.round(this._fps), pos.x+5, pos.y+15);
+	//
+	var offset = p5.Vector.add(pos, createVector(100,10))
+	graphic.fill(0,100,200,100);
+	graphic.stroke(150,0,0);
+	graphic.line(offset.x,offset.y,offset.x+200,offset.y); //100-60fps=offset.y
+	var t = this._fps_hystory.length;
+	graphic.line(offset.x+200-t*2,offset.y-10,offset.x+200-t*2,offset.y+10); //100-60fps=offset.y(+/-10)
+	graphic.stroke(200);
+	graphic.beginShape();
+	graphic.vertex(offset.x+200-(t*2-1),offset.y);
+	for (i = t-1; i >= 0; i--) {
+		var fps = this._fps_hystory[i];
+		fps = map(fps,0,120,20,-20);
+		vertex(offset.x+200-i*2,offset.y+fps+1);
+	}
+	graphic.vertex(offset.x+200,offset.y);
+	graphic.endShape();
+	//
+	graphic.pop();
 };
 _GUI.prototype.onClick = function(mx, my){
 	for (var i = this._active.length - 1; i >= 0; i--) {
