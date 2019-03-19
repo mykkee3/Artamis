@@ -11,6 +11,10 @@ echo \# Starting Artamis \#
 echo \#------------------\#
 echo
 
+echo "Checking for updates..."
+sh update.sh
+echo
+
 # Globals and constants
 verbose=false;
 do_python=true;
