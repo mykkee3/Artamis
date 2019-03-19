@@ -4,7 +4,10 @@
 
 Add usefull info here.
 
-## autostart solution
+
+Autostart solution
+------------------
+
 issue: unable to autostart from rc.local but was unable to. 
 
 solution from : https://www.reddit.com/r/raspberry_pi/comments/7xi5zl/command_to_open_browser_on_startup/
@@ -30,4 +33,8 @@ solution from : https://www.reddit.com/r/raspberry_pi/comments/7xi5zl/command_to
 	`
 	Then reboot. Chromium should automatically launch in kiosk mode after the desktop has loaded.
 
-## Empty
+Set Screen Sleep
+----------------
+
+on  : `DISPLAY=:0 xset dpms force on`
+off : `DISPLAY=:0 xset dpms force off`

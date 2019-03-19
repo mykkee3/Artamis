@@ -488,6 +488,18 @@ Animator.prototype._segments = {
 			},
 			Exit:function(){}
 		}
+		sleep:{
+			Enter:function(args){
+				if(!args)args = {};
+				this.agent.data.default.eye_openess = 0;
+			},
+			Execute:function(){
+				//
+			},
+			Exit:function(){
+				this.agent.data.default.eye_openess = 1;
+			}
+		}
 	},
 	//
 	// mouth:{
