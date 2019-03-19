@@ -27,7 +27,7 @@ solution from : https://www.reddit.com/r/raspberry_pi/comments/7xi5zl/command_to
 	Name[en_US]=AutoChromium
 	Name=AutoChromium
 	Comment=Start Chromium when GNOME starts
-	Then reboot. Chromium should automatically launch in kiosk mode after the desktop has loaded.
 	`
+	Then reboot. Chromium should automatically launch in kiosk mode after the desktop has loaded.
 
 ## Empty

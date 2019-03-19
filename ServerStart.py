@@ -7,6 +7,7 @@ Starting point
 #-# Imports #-#
 from sys import stdout as sys_stdout
 from os import chdir as os_chdir
+from subprocess import check_output
 from threading import Thread
 import SimpleHTTPServer
 import SocketServer
@@ -64,7 +65,8 @@ class HandlerClass(Handler):
 		self._set_headers()
 		self.wfile.write(resp)
 
-server = SocketServer.TCPServer(('192.168.1.18', 8080), HandlerClass)
+ip = check_output("ifconfig | grep -Eo 'inet (addr:)?([0-9]*\\.){3}[0-9]*' | grep -Eo '([0-9]*\\.){3}[0-9]*' | grep -v '127.0.0.1'")
+server = SocketServer.TCPServer((ip, 8080), HandlerClass)
 
 
 #-# Functions and Classes #-#
