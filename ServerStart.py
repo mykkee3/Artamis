@@ -23,6 +23,8 @@ Birb = Birb_();
 
 #-# Globals and Constants #-#
 
+IP_ADDRESS = '0.0.0.0'
+
 PARSER = argparse.ArgumentParser()
 PARSER.add_argument("in_pipe", nargs='?', default="server_inpipe", help="filepath to stdin pipe")
 PARSER.add_argument("out_pipe", nargs='?', default="server_outpipe", help="filepath to stdout pipe")
@@ -65,8 +67,7 @@ class HandlerClass(Handler):
 		self._set_headers()
 		self.wfile.write(resp)
 
-ip = check_output("ifconfig | grep -Eo 'inet (addr:)?([0-9]*\\.){3}[0-9]*' | grep -Eo '([0-9]*\\.){3}[0-9]*' | grep -v '127.0.0.1'")
-server = SocketServer.TCPServer((ip, 8080), HandlerClass)
+server = SocketServer.TCPServer((IP_ADDRESS, 8080), HandlerClass)
 
 
 #-# Functions and Classes #-#
