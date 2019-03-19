@@ -427,7 +427,7 @@ _GUI.prototype.drawDebug = function(){
 	graphic.vertex(offset.x+200-(t*2-1),offset.y);
 	for (i = t-1; i >= 0; i--) {
 		var fps = this._fps_hystory[i];
-		fps = map(fps,0,120,20,-20);
+		fps = map(fps,0,120,10,-10);
 		vertex(offset.x+200-i*2,offset.y+fps+1);
 	}
 	graphic.vertex(offset.x+200,offset.y);
