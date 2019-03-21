@@ -487,7 +487,7 @@ Animator.prototype._segments = {
 
 			},
 			Exit:function(){}
-		}
+		},
 		sleep:{
 			Enter:function(args){
 				if(!args)args = {};
