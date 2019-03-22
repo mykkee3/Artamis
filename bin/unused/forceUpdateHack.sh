@@ -19,6 +19,7 @@ sed -i 's/$cur_ver/$new_ver/' manifest.json;
 
 # Reboot #
 if $do_reboot; then
-	echo "Rebooting..."
+	echo "Rebooting...";
+	echo
 	sudo reboot;
 fi
