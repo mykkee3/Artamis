@@ -15,11 +15,11 @@ echo "~/bin/unused/forceUpdateHack.sh";
 echo "changing ~/manifest.json/.info.version from $cur_ver to $new_ver.";
 
 # Switch the Versions #
-sed -i 's/$cur_ver/$new_ver/' manifest.json;
+sed -i "s/$cur_ver/$new_ver/g" manifest.json;
 
 # Reboot #
 if $do_reboot; then
-	echo "Rebooting...";
-	sleep 10;
+	echo "Rebooting... Gimmy a sec ^v^";
+	sleep 1;
 	sudo reboot;
 fi
