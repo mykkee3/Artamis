@@ -1,4 +1,6 @@
 echo "\nStarting Update shell"
+echo "sleeping for a sec...    -.- zz"
+sleep 5;
 
 hard=true;
 
