@@ -18,4 +18,7 @@ echo "changing ~/manifest.json/.info.version from $cur_ver to $new_ver.";
 sed -i 's/$cur_ver/$new_ver/' manifest.json;
 
 # Reboot #
-if $do_reboot; then sudo reboot; fi
+if $do_reboot; then
+	echo "Rebooting..."
+	sudo reboot;
+fi
