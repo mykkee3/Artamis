@@ -17,6 +17,9 @@ echo "changing ~/manifest.json/.info.version from $cur_ver to $new_ver.";
 # Switch the Versions #
 sed -i "s/$cur_ver/$new_ver/g" manifest.json;
 
+# Do Update
+sh update.sh;
+
 # Reboot #
 if $do_reboot; then
 	echo "Rebooting... Gimmy just a sec ^v^";
