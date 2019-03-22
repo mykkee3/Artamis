@@ -4,8 +4,9 @@ cd /home/pi/Desktop/dev/Artamis/
 p=4
 
 cur_ver=$(jq --raw-output '.info.version' manifest.json);
-new_ver="${cur_ver:0:p}((${cur_ver:p}-1))"
+echo cur_ver;
+new_ver="${cur_ver:0:p}$((${cur_ver:p}-1))";
 
-echo "changing version $cur_ver to $new_ver"
+echo "changing version $cur_ver to $new_ver";
 
-sed 's/${cur_ver}/${new_ver}/' manifest.json
+sed 's/${cur_ver}/${new_ver}/' manifest.json;
