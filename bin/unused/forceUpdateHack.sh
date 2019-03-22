@@ -20,6 +20,6 @@ sed -i 's/$cur_ver/$new_ver/' manifest.json;
 # Reboot #
 if $do_reboot; then
 	echo "Rebooting...";
-	echo
+	sleep 10;
 	sudo reboot;
 fi
