@@ -19,7 +19,7 @@ sed -i "s/$cur_ver/$new_ver/g" manifest.json;
 
 # Reboot #
 if $do_reboot; then
-	echo "Rebooting... Gimmy a sec ^v^";
+	echo "Rebooting... Gimmy just a sec ^v^";
 	sleep 1;
 	sudo reboot;
 fi
