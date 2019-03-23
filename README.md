@@ -1,6 +1,6 @@
 # Project Title
 
-README template supplied by [**PurpleBooth**](https://gist.github.com/PurpleBooth/109311bb0361f32d87a2).  
+~README template supplied by [**PurpleBooth**](https://gist.github.com/PurpleBooth/109311bb0361f32d87a2).~
 One Paragraph of project description goes here
 
 ## Getting Started
@@ -92,3 +92,5 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 * Hat tip to anyone whose code was used
 * Inspiration
 * etc
+
+* README template supplied by [**PurpleBooth**](https://gist.github.com/PurpleBooth/109311bb0361f32d87a2). Thanks ^v^
