@@ -4,7 +4,7 @@
 #
 # INFO: The info for this folder can be found in /../README.md
 
-echo "Distributing Files..."
+echo "Distributing ~/bin/sys/linux/ Files..."
 
 sys_dir="/home/Artamis/"
 
