@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=Application
-Exec=sh /home/artamis.sh
+Exec=sh /home/Artamis/artamis.sh
 Hidden=false
 X-GNOME-Autostart-enabled=true
 Name[en_US]=AutoArtamis
