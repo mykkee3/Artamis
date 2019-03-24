@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Exec=sh /home/artamis.sh
+Hidden=false
+X-GNOME-Autostart-enabled=true
+Name[en_US]=AutoArtamis
+Name=AutoArtamis
+Comment=Start Chromium when GNOME starts
