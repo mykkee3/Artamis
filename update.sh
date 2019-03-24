@@ -25,9 +25,6 @@ if [ "$cur_ver" != "$new_ver" ] && [ ! -z "$new_ver" ]; then
 	fi
 fi
 
-echo "Distributing bin/sys/linux/ files..."
 sh bin/sys/linux/distribute.sh
-echo "... Done"
-echo
 
 echo "\nUpdate shell Done"
