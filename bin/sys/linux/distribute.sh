@@ -6,10 +6,10 @@
 
 sys_dir="/home/Artamis/"
 
-cd /home/pi/Desktop/dev/Artamis/bin/sys/
+cd /home/pi/Desktop/dev/Artamis/bin/sys/linux/
 
-sudo cp autoArtamis.desktop ~/.config/autostart/
+sudo cp -rf autoArtamis.desktop ~/.config/autostart/
 
-mkdir /home/Artamis/
-sudo cp artamis.sh $sys_dir
-sudo cp update.sh $sys_dir
+sudo mkdir /home/Artamis/
+sudo cp -rf artamis.sh $sys_dir
+sudo cp -rf update.sh $sys_dir
