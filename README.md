@@ -1,6 +1,7 @@
 # Project Title
 
 ~README template supplied by [**PurpleBooth**](https://gist.github.com/PurpleBooth/109311bb0361f32d87a2).~
+
 One Paragraph of project description goes here
 
 ## Getting Started
