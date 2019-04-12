@@ -83,6 +83,10 @@ var Environment = function () {
 								label:'Toggle Log',
 								onClick:function(){this.GUI.parent.log_viewport.toggle()}
 							}},
+							{build:'special_button',data:{
+								label:'Toggle Debug',
+								onClick:function(){this.GUI._debug = !this.GUI._debug}
+							}},
 							{build:'button',data:{
 								label:'Toggle Gender',
 								onClick:function(){
