@@ -1,0 +1,11 @@
+{
+	"conf" : {
+		"title" : "Bird",
+		"desc" : "bird",
+		"embeded" : true,
+		"enable_p5" : true
+	},
+	"scripts" : [
+		"./sketch.js"
+	]
+}

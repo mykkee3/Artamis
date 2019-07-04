@@ -63,7 +63,7 @@ unclutter -idle 1 &
 echo "Starting Chromium browser"
 sed -i 's/"exited_cleanly":false/"exited_cleanly":true/' ~/.config/chromium/'Local State'
 sed -i 's/"exited_cleanly":false/"exited_cleanly":true/; s/"exit_type":"[^"]\+"/"exit_type":"Normal"/' ~/.config/chromium/Default/Preferences
-chromium-browser --new-window --disable-infobars --incognito --kiosk 'http://0.0.0.0:8080/Artamis_Bird/'
+chromium-browser --new-window --disable-infobars --incognito --kiosk 'http://0.0.0.0:8080/Mirror/'
 #wait
 # cleanup routine
 echo Starting Shutdown
