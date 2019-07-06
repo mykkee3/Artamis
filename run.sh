@@ -11,14 +11,14 @@ echo \# Starting Artamis \#
 echo \#------------------\#
 echo
 
-echo "Checking for updates..."
-sh update.sh
-echo
+#echo "Checking for updates..."
+#sh update.sh
+#echo
 
 # Globals and constants
-verbose=false;
+verbose=true;
 do_python=true;
-do_chrome=true;
+do_chrome=false;
 
 # load manifest info
 version="0.1.0 pre-alpha";
