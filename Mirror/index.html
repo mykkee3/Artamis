@@ -11,13 +11,18 @@
 	<script>
 	function startTime() {
 	  var today = new Date();
+      var date_string = today.toDateString();
 	  var h = today.getHours();
+      var h12 = (h - 1) % 12 + 1;
+      var ampm = h >= 12 ? 'pm' : 'am';
 	  var m = today.getMinutes();
 	  var s = today.getSeconds();
 	  m = checkTime(m);
 	  s = checkTime(s);
-	  document.getElementById('clock').innerHTML =
+	  document.getElementById('clock-main').innerHTML =
 	  h + ":" + m + ":" + s;
+      document.getElementById('clock-sub').innerHTML = 
+      h12 + ":" + m + ampm + " on " + date_string;
 	  var t = setTimeout(startTime, 500);
 	}
 	function checkTime(i) {
@@ -56,7 +61,10 @@
 </head>
 <body>
 
-<div id="clock">Clock</div>
+<div id="clock-container">
+	<div id="clock-main">Clock</div>
+	<div id="clock-sub">Subline</div>
+</div>
 <!--div id='game-container'></div-->
 
 </body>

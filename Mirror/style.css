@@ -6,9 +6,14 @@ form {
 	margin: 0;
 }
 
-#clock {
+#clock-container {
 	color: #2c5;
+}
+#clock-main {
 	font-size: 175;
+}
+#clock-sub {
+	font-size: 50;
 }
 
 #game-container {
