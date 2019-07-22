@@ -8,7 +8,7 @@ echo "Distributing [~/bin/sys/linux/] Files..."
 
 sys_dir="/home/Artamis/"
 
-cd /home/pi/Desktop/dev/Artamis/bin/sys/linux/
+cd /home/pi/dev/Artamis/bin/sys/linux/
 
 echo "[~/.config/autostart/autoArtamis.desktop]"
 sudo cp -rf autoArtamis.desktop ~/.config/autostart/

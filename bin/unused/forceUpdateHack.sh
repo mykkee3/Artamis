@@ -1,6 +1,6 @@
 #!/bin/bash
 # WARNING: Will not work if run with sh; run with bash, eg: `bash forceUpdateHack.sh`
-cd /home/pi/Desktop/dev/Artamis/
+cd /home/pi/dev/Artamis/
 
 # Set Variables #
 # WARNING: probably wont work with 0 or . in the p place... so dont do it; besides a version '.0' should not need be force updated.
