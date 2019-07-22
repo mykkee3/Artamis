@@ -1,4 +1,7 @@
-#
+#!/bin/bash
+
+
+
 # Artamis starting point
 #
 # TODO: add verbose features
@@ -16,11 +19,16 @@ VERBOSE=false;
 DO_PYTHON=true;
 DO_CHROME=true;
 
-
 POSITIONAL=();
 while [[ $# -gt 0 ]]
 do
 key="$1"
+
+help_text(){
+	echo 
+	echo "help text"
+	echo 
+};
 
 case $key in
     -t|--testing)
@@ -49,6 +57,11 @@ case $key in
     DO_CHROME=false;
     shift # past argument
     ;;
+    -h|--help)
+	help_text;
+	exit 0;
+    shift # past argument
+	;;
     *)    # unknown option
     POSITIONAL+=("$1") # save it in an array for later
     shift # past argument
