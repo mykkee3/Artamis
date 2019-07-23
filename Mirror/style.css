@@ -1,5 +1,10 @@
 body {
 	background: black;
+	background-image: url("wallpaperFade.jpg");
+	background-repeat: no-repeat;
+	background-color: black;
+	background-size: contain;
+	background-position: bottom;
 }
 form {
 	padding: 0;
