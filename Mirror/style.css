@@ -8,12 +8,29 @@ form {
 
 #clock-container {
 	color: #2c5;
+	padding: 10px;
+	margin: 10px;
 }
 #clock-main {
-	font-size: 175;
+	font-size: 160;
+	padding: 0px;
+	margin: 0px;
 }
 #clock-sub {
-	font-size: 50;
+	font-size: 40;
+	padding: 0px 0px 0px 20px;
+}
+
+#radio-container {
+	position: absolute;
+	padding 10px;
+	margin: 10px;
+	bottom: 0px;
+}
+#radio-main {
+	width: 400;
+	height: 250;
+	overflow: hidden;
 }
 
 #game-container {
