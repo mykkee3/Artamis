@@ -12,18 +12,75 @@ form {
 }
 
 #clock-container {
-	color: #2c5;
+	color: #193;
 	padding: 10px;
-	margin: 10px;
+	margin: 15px;
 }
 #clock-main {
 	font-size: 160;
+	line-height: 120px;
 	padding: 0px;
 	margin: 0px;
 }
 #clock-sub {
+	/*color: #3c5;*/
 	font-size: 40;
 	padding: 0px 0px 0px 20px;
+}
+
+
+#calander-container {
+	color: #193;
+	padding: 0px;
+	margin: 0px, 10px;
+}
+#calander-title {
+	
+}
+#calander-main {
+	visibility: visible; /* visible|hidden */
+}
+#calander-small {
+	visibility: hidden;
+}
+#calander-main ul li {	
+	border-color: #3c5;
+	border-left: 1px solid #3c5;
+	border-right: 1px solid #3c5;
+}
+
+/* Weekdays (Mon-Sun) */
+.weekdays {
+	margin: 0;
+	padding: 10px 0;
+}
+.weekdays-number {
+	float: right;
+	text-align: right;
+}
+
+.weekdays li {
+	display: inline-block;
+	width: 13.6%;
+	text-align: left;
+}
+.weekdays div {
+	padding: 0px 8px;
+}
+.weekdays hr {
+	color: #3c5;
+	border-color: #3c5;
+	border-bottom: 1px solid #3c5;
+	
+	padding: 0px;
+	margin: 0px 5%;
+	text-align: center;
+	width : 90%;
+}
+.weekdays .content {
+	/*float: left;*/
+	margin: 5px 0px; 
+	height: 100px;
 }
 
 #radio-container {

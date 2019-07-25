@@ -13,7 +13,7 @@
 	  var today = new Date();
       var date_string = today.toDateString();
 	  var h = today.getHours();
-      var h12 = (h - 1) % 12 + 1;
+      var h12 = (h + 11) % 12 + 1;
       var ampm = h >= 12 ? 'pm' : 'am';
 	  var m = today.getMinutes();
 	  var s = today.getSeconds();
@@ -30,6 +30,11 @@
 	  return i;
 	}
 	</script>
+
+	<script>
+	function getWeather() {
+	}; 
+	</script> 
 	
 	<script type="text/javascript">
 		//-=-=-=-=-=-=- Functions -=-=-=-=-=-=-//
@@ -37,6 +42,7 @@
 		$(document).ready(function () {
 			// Clock
 			startTime();
+			getWeather();
 			//
 			$.getJSON("./manifest.json", function(json_data) {
 				// Loads all scripts in manifest
@@ -65,6 +71,53 @@
 	<div id="clock-main">Clock</div>
 	<div id="clock-sub">Subline</div>
 </div>
+
+<div id="calander-container">
+	<div id="calander-title">Calander</div>
+	<div id="calander-main">
+		<ul class="weekdays">
+			<li>
+				<div>Sun<div class="weekdays-number">1</div></div>
+				<hr/>
+				<div class="content">item</div>
+			</li>
+			<li>
+				<div>Mon<div class="weekdays-number">1</div></div>
+				<hr/>
+				<div class="content">item</div>
+			</li>
+			<li>
+				<div>Tue<div class="weekdays-number">1</div></div>
+				<hr/>
+				<div class="content">item</div>
+			</li>
+			<li>
+				<div>Wed<div class="weekdays-number">1</div></div>
+				<hr/>
+				<div class="content">item</div>
+			</li>
+			<li>
+				<div>Thu<div class="weekdays-number">1</div></div>
+				<hr/>
+				<div class="content">item</div>
+			</li>
+			<li>
+				<div>Fri<div class="weekdays-number">1</div></div>
+				<hr/>
+				<div class="content">item</div>
+			</li>
+			<li>
+				<div>Sat<div class="weekdays-number">1</div></div>
+				<hr/>
+				<div class="content">item</div>
+			</li>
+		</ul>
+	</div>
+	<div id="calander-small">
+		<div></div>
+	</div>
+</div>
+
 <!--div id='game-container'></div-->
 
 <div id=radio-container>
