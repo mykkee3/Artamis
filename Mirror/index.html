@@ -17,6 +17,7 @@
       var ampm = h >= 12 ? 'pm' : 'am';
 	  var m = today.getMinutes();
 	  var s = today.getSeconds();
+      h = checkTime(h);
 	  m = checkTime(m);
 	  s = checkTime(s);
 	  document.getElementById('clock-main').innerHTML =
@@ -32,6 +33,33 @@
 	</script>
 
 	<script>
+		Date.prototype.addDays = function(days) {
+			var date = new Date(this.valueOf());
+			date.setDate(date.getDate() + days);
+			return date;
+		}
+		function startCalander(){
+			var today = new Date();
+			var day_num = today.getDate();
+			var wday_num = today.getDay();
+			
+			for (var i=0; i<7; i++){
+				var wday = (wday_num + i) % 7;
+				var day = today.addDays(i).getDate();
+				console.log(wday, day);
+				// set some stuff
+				document.getElementsByClassName("weekdays")[0].getElementsByClassName("weekdays-number")[wday].innerHTML = day;
+				document.getElementsByClassName("weekdays")[0].getElementsByClassName("weekdays-number")[wday].className.replace("active", "");
+				//console.log(document.getElementById("calander-main"))
+				document.getElementsByClassName("weekdays")[0].getElementsByClassName("content")[wday].innerHTML = "";
+			}
+			document.getElementsByClassName("weekdays")[0].getElementsByClassName("weekdays-number")[wday_num].className += " active";
+			document.getElementsByClassName("weekdays")[0].getElementsByClassName("weekdays-number")[wday_num].className.replace("  ", " ");
+			var t = setTimeout(startCalander, 30*1000)
+		};
+	</script>
+
+	<script>
 	function getWeather() {
 	}; 
 	</script> 
@@ -42,6 +70,7 @@
 		$(document).ready(function () {
 			// Clock
 			startTime();
+			startCalander();
 			getWeather();
 			//
 			$.getJSON("./manifest.json", function(json_data) {

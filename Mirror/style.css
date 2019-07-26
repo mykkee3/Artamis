@@ -13,12 +13,12 @@ form {
 
 #clock-container {
 	color: #193;
-	padding: 10px;
+	padding: 50px 10px 10px 10px;
 	margin: 15px;
 }
 #clock-main {
-	font-size: 160;
-	line-height: 120px;
+	font-size: 140;
+	line-height: 110px;
 	padding: 0px;
 	margin: 0px;
 }
@@ -58,6 +58,11 @@ form {
 	float: right;
 	text-align: right;
 }
+.weekdays-number.active{
+	background-color: #282;
+	border-radius: 8px;
+	color: black;
+}
 
 .weekdays li {
 	display: inline-block;
@@ -73,7 +78,7 @@ form {
 	border-bottom: 1px solid #3c5;
 	
 	padding: 0px;
-	margin: 0px 5%;
+	margin: 5px 5%;
 	text-align: center;
 	width : 90%;
 }
