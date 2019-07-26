@@ -49,7 +49,7 @@
 				console.log(wday, day);
 				// set some stuff
 				document.getElementsByClassName("weekdays")[0].getElementsByClassName("weekdays-number")[wday].innerHTML = day;
-				document.getElementsByClassName("weekdays")[0].getElementsByClassName("weekdays-number")[wday].className.replace("active", "");
+				document.getElementsByClassName("weekdays")[0].getElementsByClassName("weekdays-number")[wday].classList.remove("active");
 				//console.log(document.getElementById("calander-main"))
 				document.getElementsByClassName("weekdays")[0].getElementsByClassName("content")[wday].innerHTML = "";
 			}
@@ -102,7 +102,14 @@
 </div>
 
 <div id="calander-container">
-	<div id="calander-title">Calander</div>
+	<div id="calander-title">
+		<table>
+		<tr>
+			<td>Calander -</td>
+			<td class="content">info</td>
+		</tr>
+		</table>
+	</div>
 	<div id="calander-main">
 		<ul class="weekdays">
 			<li>
@@ -116,7 +123,7 @@
 				<div class="content">item</div>
 			</li>
 			<li>
-				<div>Tue<div class="weekdays-number">1</div></div>
+				<div>Tue<div class="weekdays-number active">1</div></div>
 				<hr/>
 				<div class="content">item</div>
 			</li>
