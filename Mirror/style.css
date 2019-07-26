@@ -39,11 +39,11 @@ form {
 	margin: 30px 0px;
 }
 #calander-title {
-	color: #626;
+	color: #836;
 	font-size: 30;
 }
 #calander-title table {
-	color: #376;
+	color: #836;
 	font-size: 30;
 }
 #calander-title .content {
@@ -71,7 +71,7 @@ form {
 	text-align: right;
 }
 .weekdays-number.active{
-	background-color: #376;
+	background-color: #836;
 	border-radius: 10px;
 	color: black;
 }
