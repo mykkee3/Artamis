@@ -55,8 +55,7 @@ form {
 #calander-small {
 	visibility: hidden;
 }
-#calander-main ul li {
-	height-top: 0px;	
+#calander-main ul li. {	
 	border-color: #3c5;
 	border-left: 1px solid #3c5;
 	border-right: 1px solid #3c5;

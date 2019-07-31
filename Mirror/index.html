@@ -33,6 +33,19 @@
 	</script>
 
 	<script>
+		var calander_data = {
+			info : {},
+			weekday_data : [
+				["."],
+				["Festival Ends"],
+				["."],
+				["."],
+				["\"Kody's Day\""],
+				["Festival Start"],
+				["Cassies B-day"]
+			],
+			list_data : {}
+		};
 		Date.prototype.addDays = function(days) {
 			var date = new Date(this.valueOf());
 			date.setDate(date.getDate() + days);
@@ -51,7 +64,8 @@
 				document.getElementsByClassName("weekdays")[0].getElementsByClassName("weekdays-number")[wday].innerHTML = day;
 				document.getElementsByClassName("weekdays")[0].getElementsByClassName("weekdays-number")[wday].classList.remove("active");
 				//console.log(document.getElementById("calander-main"))
-				document.getElementsByClassName("weekdays")[0].getElementsByClassName("content")[wday].innerHTML = "";
+				var content = calander_data.weekday_data[wday][0] || "";
+				document.getElementsByClassName("weekdays")[0].getElementsByClassName("content")[wday].innerHTML = content;
 			}
 			document.getElementsByClassName("weekdays")[0].getElementsByClassName("weekdays-number")[wday_num].className += " active";
 			document.getElementsByClassName("weekdays")[0].getElementsByClassName("weekdays-number")[wday_num].className.replace("  ", " ");
