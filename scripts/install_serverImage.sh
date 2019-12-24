@@ -183,7 +183,7 @@ echo "
 interface eth0
 static ip_address=192.168.100.$ip_host/24
 static routers=192.168.1.1
-static domain_name_servers=192.168.1.1" | sudo tee -a /mnt/raspi-disk/etc/dhcpcd.conf
+static domain_name_servers=192.168.1.1 8.8.8.8 8.8.4.4" | sudo tee -a /mnt/raspi-disk/etc/dhcpcd.conf
 
 echo
 echo "==========================="
